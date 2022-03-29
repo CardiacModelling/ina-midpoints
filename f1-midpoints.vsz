@@ -1,5 +1,5 @@
 # Veusz saved document (version 3.3.1)
-# Saved at 2022-03-29T16:25:46.867997
+# Saved at 2022-03-29T18:14:07.418663
 
 AddImportPath(u'/home/michael/dev/ina-midpoints')
 ImportFileCSV(u'data-out/midpoint-correlations.csv', headermode=u'1st', linked=True, numericlocale=u'C')
@@ -9,7 +9,7 @@ ImportFileCSV(u'data-out/midpoints-wt-a-00-all.csv', headermode=u'1st', linked=T
 ImportFileCSV(u'data-out/midpoints-wt-a-11-most-common.csv', headermode=u'1st', linked=True, dsprefix=u'midpoints-w-wt-a-10-most-common.csv-')
 ImportFileCSV(u'data-out/midpoints-wt-i-00-all.csv', headermode=u'1st', linked=True, dsprefix=u'midpoints-w-wt-i-00-all.csv_', skipwhitespace=True)
 ImportFileCSV(u'data-out/midpoints-wt-i-11-most-common.csv', headermode=u'1st', linked=True, dsprefix=u'midpoints-w-wt-i-10-most-common.csv-')
-CreateHistogram(u'dv', u'position-7', u'height-7', binparams=(22, 18.0, 62.0, False), binmanual=[18.0, 20.0, 22.0, 24.0, 26.0, 28.0, 30.0, 32.0, 34.0, 36.0, 38.0, 40.0, 42.0, 44.0, 46.0, 48.0, 50.0, 52.0, 54.0, 56.0, 58.0, 60.0, 62.0], method=u'counts', cumulative=u'none', errors=False)
+CreateHistogram(u'dv', u'position-7', u'height-7', binparams=(22, 20.0, 64.0, False), binmanual=None, method=u'counts', cumulative=u'none', errors=False)
 Set('width', u'17cm')
 Set('height', u'9cm')
 Set('StyleSheet/Font/font', u'Arial')
@@ -350,8 +350,8 @@ Set('Border/hide', True)
 Add('axis', name=u'x', autoadd=False)
 To(u'x')
 Set('label', u'V_{a} - V_{i} [mV]')
-Set('min', u'Auto')
-Set('max', u'Auto')
+Set('min', 20.0)
+Set('max', 64.0)
 Set('autoMirror', False)
 To('..')
 Add('axis', name=u'y', autoadd=False)

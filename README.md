@@ -42,4 +42,6 @@ The figures can be recreated using [Veusz](https://veusz.github.io/).
 - [ ] Standard deviation of `Vi` (lowest, mean, highest, 2*sigma) from TODOTODOTODO
 - [x] Standard deviation of summed `Va` from `f1ab-midpoints.py`
 - [x] Number of reports of both `Va` and `Vi` shown by `f1cd-correlations.py`
+- [x] Linear regression numbers shown by `f1cd-correlations.py`
+- [ ] Standard deviation of "correlation-corrected" Vi shown by `f1cd-correlations.py`
 

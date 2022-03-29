@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 #
-# Database (adapted from SCN5A mutations project).
+# Database module (adapted from SCN5A mutations project).
 #
 
-#
 # Module directory
 import os
 import inspect
@@ -25,19 +24,10 @@ DIR_DATA_OUT = os.path.join(DIR_ROOT, 'data-out')
 # DB file
 PATH_DB = os.path.join(DIR_DATA_IN, 'mutations.sqlite')
 
-# Figure input files
-DIR_FIGURES_IN = os.path.join(DIR_ROOT, 'figures-in')
-
-# Figure input files
-DIR_FIGURES_OUT = os.path.join(DIR_ROOT, 'figures-out')
-
 # Ensure output paths exist
 if not os.path.isdir(DIR_DATA_OUT):
     print(f'Creating directory {DIR_DATA_OUT}')
     os.makedirs(DIR_DATA_OUT)
-if not os.path.isdir(DIR_FIGURES_OUT):
-    print(f'Creating directory {DIR_FIGURES_OUT}')
-    os.makedirs(DIR_FIGURES_OUT)
 
 # Delete imported libraries
 del(os, inspect)
