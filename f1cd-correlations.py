@@ -22,9 +22,10 @@ def gather(query, filename1, filename2):
     row.
     4. Creates and returns a table row.
 
-    The returned row contains the fields ``(nreports, a, b, p)``, where
-    ``nreports`` is the number of reports used, ``a`` and ``b`` are the
-    regression offset and slope, and ``p`` is the Peras
+    The returned row contains the fields ``(nreports, a, b, p, sd_diff)``,
+    where ``nreports`` is the number of reports used, ``a`` and ``b`` are the
+    regression offset and slope, ``p`` is the Pearson correlation coefficient,
+    and ``sd_diff`` is the standard deviation of ``V_a - V_i``.
     """
     # Query db
     data = []
@@ -34,10 +35,8 @@ def gather(query, filename1, filename2):
             data.append((
                 row['pub'],
                 row['va'],
-                #row['stda'],
                 row['stda'] * 2,
                 row['vi'],
-                #row['stdi'],
                 row['stdi'] * 2,
                 row['va'] - row['vi'],
             ))
@@ -80,12 +79,15 @@ def gather(query, filename1, filename2):
     # Get Pearson correlation coefficient
     p = np.corrcoef(va, vi)[1, 0]
 
+    # Get standard deviation of Va - Vi
+    sd_diff = np.std(va - vi)
+
     # Return row
-    return [len(data), a, b, p]
+    return [len(data), a, b, p, sd_diff]
 
 
 if __name__ == '__main__':
-    head = ['', 'reports', 'a', 'b', 'Pearson']
+    head = ['', 'reports', 'a', 'b', 'Pearson', 'Sigma Va-Vi']
     rows = []
 
     # All data
