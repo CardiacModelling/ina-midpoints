@@ -1,0 +1,26 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Setuptools files
+*.egg-info
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Apple stuff
+.DS_Store
+
+# vscode
+.vscode
+
+# pycharm
+.idea
+
+# Virtual environments
+venv*
+
+# Build artifacts
+build/*
+dist/*
