@@ -363,7 +363,7 @@ def tex_table_wt(rows, filename):
         f.write(row(f, 'Isoform a'))
         f.write(row(f, 'Isoform b'))
         f.write(row(f, 'Isoform a*'))
-        f.write(row(f, 'Isoform a*'))
+        f.write(row(f, 'Isoform b*'))
         f.write(row(f, 'Isoform ?', 'Unknown'))
         f.write('\hline\n')
         f.write(row(f, 'With beta1', r'With \bet1'))
