@@ -142,155 +142,90 @@ def midpoints_wt(con):
     c = con.cursor()
     rows = []
 
-    # Activation: All data
-    q = 'select pub, va, sema, na, stda from midpoints_wt'
+    # All data
+    a = 'select pub, va, sema, na, stda from midpoints_wt'
+    i = 'select pub, vi, semi, ni, stdi from midpoints_wt'
     filename = 'midpoints-wt-a-00-all.csv'
-    rows.append(['Act; Combined'] + gather(filename, c.execute(q)))
-
-    # Activation: HEK, a*, beta1
-    q = 'select pub, va, sema, na, stda from midpoints_wt'
-    q += ' where sequence == "astar"'
-    q += ' and cell == "HEK"'
-    q += ' and beta1 == "yes"'
-    filename = 'midpoints-wt-a-11-most-common.csv'
-    rows.append(['Act; Common'] + gather(filename, c.execute(q)))
-
-    # Activation: Isoform a
-    q = 'select pub, va, sema, na, stda from midpoints_wt'
-    q += ' where sequence == "a"'
-    filename = 'midpoints-wt-a-01-isoform-a.csv'
-    rows.append(['Act; Isoform a'] + gather(filename, c.execute(q)))
-
-    # Activation: Isoform b
-    q = 'select pub, va, sema, na, stda from midpoints_wt'
-    q += ' where sequence == "b"'
-    filename = 'midpoints-wt-a-02-isoform-b.csv'
-    rows.append(['Act; Isoform b'] + gather(filename, c.execute(q)))
-
-    # Activation: Isoform a*
-    q = 'select pub, va, sema, na, stda from midpoints_wt'
-    q += ' where sequence == "astar"'
-    filename = 'midpoints-wt-a-03-isoform-a-star.csv'
-    rows.append(['Act; Isoform a*'] + gather(filename, c.execute(q)))
-
-    # Activation: Isoform b*
-    q = 'select pub, va, sema, na, stda from midpoints_wt'
-    q += ' where sequence == "bstar"'
-    filename = 'midpoints-wt-a-04-isoform-b-star.csv'
-    rows.append(['Act; Isoform b*'] + gather(filename, c.execute(q)))
-
-    # Activation: Isoform unknown
-    q = 'select pub, va, sema, na, stda from midpoints_wt'
-    q += ' where sequence is null'
-    filename = 'midpoints-wt-a-05-isoform-unknown.csv'
-    rows.append(['Act; Isoform ?'] + gather(filename, c.execute(q)))
-
-    # Activation: With beta1
-    q = 'select pub, va, sema, na, stda from midpoints_wt'
-    q += ' where beta1 == "yes"'
-    filename = 'midpoints-wt-a-09-with-beta1.csv'
-    rows.append(['Act; With beta1'] + gather(filename, c.execute(q)))
-
-    # Activation: Without beta1
-    q = 'select pub, va, sema, na, stda from midpoints_wt'
-    q += ' where beta1 == "no"'
-    filename = 'midpoints-wt-a-10-without-beta1.csv'
-    rows.append(['Act; Without beta1'] + gather(filename, c.execute(q)))
-
-    # Activation: HEK
-    q = 'select pub, va, sema, na, stda from midpoints_wt'
-    q += ' where cell == "HEK"'
-    filename = 'midpoints-wt-a-06-hek.csv'
-    rows.append(['Act; HEK'] + gather(filename, c.execute(q)))
-
-    # Activation: CHO
-    q = 'select pub, va, sema, na, stda from midpoints_wt'
-    q += ' where cell == "CHO"'
-    filename = 'midpoints-wt-a-08-cho.csv'
-    rows.append(['Act; CHO'] + gather(filename, c.execute(q)))
-
-    # Activation: Oocytes
-    q = 'select pub, va, sema, na, stda from midpoints_wt'
-    q += ' where cell == "Oocyte"'
-    filename = 'midpoints-wt-a-07-oocytes.csv'
-    rows.append(['Act; Oocyte'] + gather(filename, c.execute(q)))
-
-    #
-    # Inactivation
-    #
-
-    # Inactivation: All data
-    q = 'select pub, vi, semi, ni, stdi from midpoints_wt'
+    rows.append(['Act; Combined'] + gather(filename, c.execute(a), False))
     filename = 'midpoints-wt-i-00-all.csv'
-    rows.append(['Inact; Combined'] + gather(filename, c.execute(q)))
+    rows.append(['Inact; Combined'] + gather(filename, c.execute(i), False))
 
-    # Inactivation: HEK, a*, with
-    q = 'select pub, vi, semi, ni, stdi from midpoints_wt'
-    q += ' where sequence == "astar"'
-    q += ' and cell == "HEK"'
-    q += ' and beta1 == "yes"'
+    # HEK, a*, beta1
+    r = ' where sequence == "astar" and cell == "HEK" and beta1 == "yes"'
+    filename = 'midpoints-wt-a-11-most-common.csv'
+    rows.append(['Act; Common'] + gather(filename, c.execute(a + r)))
     filename = 'midpoints-wt-i-11-most-common.csv'
-    rows.append(['Inact; Common'] + gather(filename, c.execute(q)))
+    rows.append(['Inact; Common'] + gather(filename, c.execute(i + r)))
 
-    # Inactivation: Isoform a
-    q = 'select pub, vi, semi, ni, stdi from midpoints_wt'
-    q += ' where sequence == "a"'
+    # Isoform a
+    r = ' where sequence == "a"'
+    filename = 'midpoints-wt-a-01-isoform-a.csv'
+    rows.append(['Act; Isoform a'] + gather(filename, c.execute(a + r)))
     filename = 'midpoints-wt-i-01-isoform-a.csv'
-    rows.append(['Inact; Isoform a'] + gather(filename, c.execute(q)))
+    rows.append(['Inact; Isoform a'] + gather(filename, c.execute(i + r)))
 
-    # Inactivation: Isoform b
-    q = 'select pub, vi, semi, ni, stdi from midpoints_wt'
-    q += ' where sequence == "b"'
+    # Isoform b
+    r = ' where sequence == "b"'
+    filename = 'midpoints-wt-a-02-isoform-b.csv'
+    rows.append(['Act; Isoform b'] + gather(filename, c.execute(a + r)))
     filename = 'midpoints-wt-i-02-isoform-b.csv'
-    rows.append(['Inact; Isoform b'] + gather(filename, c.execute(q)))
+    rows.append(['Inact; Isoform b'] + gather(filename, c.execute(i + r)))
 
-    # Inactivation: Isoform a
-    q = 'select pub, vi, semi, ni, stdi from midpoints_wt'
-    q += ' where sequence == "astar"'
+    # Isoform a*
+    r = ' where sequence == "astar"'
+    filename = 'midpoints-wt-a-03-isoform-a-star.csv'
+    rows.append(['Act; Isoform a*'] + gather(filename, c.execute(a + r)))
     filename = 'midpoints-wt-i-03-isoform-a-star.csv'
-    rows.append(['Inact; Isoform a*'] + gather(filename, c.execute(q)))
+    rows.append(['Inact; Isoform a*'] + gather(filename, c.execute(i + r)))
 
-    # Inactivation: Isoform b
-    q = 'select pub, vi, semi, ni, stdi from midpoints_wt'
-    q += ' where sequence == "bstar"'
+    # Isoform b*
+    r = ' where sequence == "bstar"'
+    filename = 'midpoints-wt-a-04-isoform-b-star.csv'
+    rows.append(['Act; Isoform b*'] + gather(filename, c.execute(a + r)))
     filename = 'midpoints-wt-i-04-isoform-b-star.csv'
-    rows.append(['Inact; Isoform b*'] + gather(filename, c.execute(q)))
+    rows.append(['Inact; Isoform b*'] + gather(filename, c.execute(i + r)))
 
-    # Inactivation: Isoform unknown
-    q = 'select pub, vi, semi, ni, stdi from midpoints_wt'
-    q += ' where sequence is null'
+    # Isoform unknown
+    r = ' where sequence is null'
+    filename = 'midpoints-wt-a-05-isoform-unknown.csv'
+    rows.append(['Act; Isoform ?'] + gather(filename, c.execute(a + r)))
     filename = 'midpoints-wt-i-05-isoform-unknown.csv'
-    rows.append(['Inact; Isoform ?'] + gather(filename, c.execute(q)))
+    rows.append(['Inact; Isoform ?'] + gather(filename, c.execute(i + r)))
 
-    # Inactivation: With beta1
-    q = 'select pub, vi, semi, ni, stdi from midpoints_wt'
-    q += ' where beta1 == "yes"'
+    # With beta1
+    r = ' where beta1 == "yes"'
+    filename = 'midpoints-wt-a-09-with-beta1.csv'
+    rows.append(['Act; With beta1'] + gather(filename, c.execute(a + r)))
     filename = 'midpoints-wt-i-09-with-beta1.csv'
-    rows.append(['Inact; With beta1'] + gather(filename, c.execute(q)))
+    rows.append(['Inact; With beta1'] + gather(filename, c.execute(i + r)))
 
-    # Inactivation: Without beta1
-    q = 'select pub, vi, semi, ni, stdi from midpoints_wt'
-    q += ' where beta1 == "no"'
+    # Without beta1
+    r = ' where beta1 == "no"'
+    filename = 'midpoints-wt-a-10-without-beta1.csv'
+    rows.append(['Act; Without beta1'] + gather(filename, c.execute(a + r)))
     filename = 'midpoints-wt-i-10-without-beta1.csv'
-    rows.append(['Inact; Without beta1'] + gather(filename, c.execute(q)))
+    rows.append(['Inact; Without beta1'] + gather(filename, c.execute(i + r)))
 
-    # Inactivation: HEK
-    q = 'select pub, vi, semi, ni, stdi from midpoints_wt'
-    q += ' where cell == "HEK"'
+    # HEK
+    r = ' where cell == "HEK"'
+    filename = 'midpoints-wt-a-06-hek.csv'
+    rows.append(['Act; HEK'] + gather(filename, c.execute(a + r)))
     filename = 'midpoints-wt-i-06-hek.csv'
-    rows.append(['Inact; HEK'] + gather(filename, c.execute(q)))
+    rows.append(['Inact; HEK'] + gather(filename, c.execute(i + r)))
 
-    # Activation: CHO
-    q = 'select pub, vi, semi, ni, stdi from midpoints_wt'
-    q += ' where cell == "CHO"'
+    # CHO
+    r = ' where cell == "CHO"'
+    filename = 'midpoints-wt-a-08-cho.csv'
+    rows.append(['Act; CHO'] + gather(filename, c.execute(a + r)))
     filename = 'midpoints-wt-i-08-cho.csv'
-    rows.append(['Inact; CHO'] + gather(filename, c.execute(q)))
+    rows.append(['Inact; CHO'] + gather(filename, c.execute(i + r)))
 
-    # Activation: Oocytes
-    q = 'select pub, vi, semi, ni, stdi from midpoints_wt'
-    q += ' where cell == "Oocyte"'
+    # Oocytes
+    r = ' where cell == "Oocyte"'
+    filename = 'midpoints-wt-a-07-oocytes.csv'
+    rows.append(['Act; Oocyte'] + gather(filename, c.execute(a + r)))
     filename = 'midpoints-wt-i-07-oocytes.csv'
-    rows.append(['Inact; Oocyte'] + gather(filename, c.execute(q)))
+    rows.append(['Inact; Oocyte'] + gather(filename, c.execute(i + r)))
 
     return rows
 
@@ -302,12 +237,9 @@ def midpoints_myo(con):
     c = con.cursor()
     rows = []
 
-    # Activation: All data
     q = 'select pub, va, sema, na, stda from midpoints_myo'
     filename = 'midpoints-myo-a-00-all.csv'
     rows.append(['Act; myocytes'] + gather(filename, c.execute(q), True))
-
-    # Inactivation: All data
     q = 'select pub, vi, semi, ni, stdi from midpoints_myo'
     filename = 'midpoints-myo-i-00-all.csv'
     rows.append(['Inact; myocytes'] + gather(filename, c.execute(q), True))
@@ -390,5 +322,5 @@ with base.connect() as con:
     print()
 
     # Write partial tex table
-    tex_table_wt(wt, 'table-subgroups.tex')
+    tex_table_wt(wt, 't1-subgroups.tex')
 
