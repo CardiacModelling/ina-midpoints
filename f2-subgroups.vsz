@@ -1,5 +1,5 @@
 # Veusz saved document (version 3.3.1)
-# Saved at 2022-03-29T17:52:47.447504
+# Saved at 2022-03-30T07:18:26.250674
 
 AddImportPath(u'/home/michael/dev/ina-midpoints')
 ImportFileCSV(u'data-out/midpoints-wt-a-01-isoform-a.csv', headermode=u'1st', linked=True, dsprefix=u'midpoints-w-wt-a-01-isoform-a.csv-')
@@ -22,6 +22,8 @@ ImportFileCSV(u'data-out/midpoints-wt-i-08-cho.csv', headermode=u'1st', linked=T
 ImportFileCSV(u'data-out/midpoints-wt-i-09-with-beta1.csv', headermode=u'1st', linked=True, numericlocale=u'C', dsprefix=u'midpoints-w-wt-i-09-with-beta1.csv-')
 ImportFileCSV(u'data-out/midpoints-wt-i-10-without-beta1.csv', headermode=u'1st', linked=True, numericlocale=u'C', dsprefix=u'midpoints-w-wt-i-10-without-beta1.csv-')
 ImportFileCSV(u'data-out/midpoints-wt-i-11-most-common.csv', headermode=u'1st', linked=True, numericlocale=u'C', dsprefix=u'midpoints-w-wt-i-11-most-common.csv-')
+Set('width', u'17cm')
+Set('height', u'19cm')
 Set('StyleSheet/Font/font', u'Arial')
 Set('StyleSheet/Font/size', u'9pt')
 Set('StyleSheet/axis/autoMirror', False)

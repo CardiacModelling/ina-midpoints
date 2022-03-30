@@ -146,9 +146,9 @@ def midpoints_wt(con):
     a = 'select pub, va, sema, na, stda from midpoints_wt'
     i = 'select pub, vi, semi, ni, stdi from midpoints_wt'
     filename = 'midpoints-wt-a-00-all.csv'
-    rows.append(['Act; Combined'] + gather(filename, c.execute(a), False))
+    rows.append(['Act; Combined'] + gather(filename, c.execute(a)))
     filename = 'midpoints-wt-i-00-all.csv'
-    rows.append(['Inact; Combined'] + gather(filename, c.execute(i), False))
+    rows.append(['Inact; Combined'] + gather(filename, c.execute(i)))
 
     # HEK, a*, beta1
     r = ' where sequence == "astar" and cell == "HEK" and beta1 == "yes"'

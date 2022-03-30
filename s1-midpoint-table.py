@@ -4,7 +4,7 @@
 #
 import base
 
-filename = 'midpoint-table.tex'
+filename = 's1-midpoint-table.tex'
 
 # Collect journal references
 refs = {}
