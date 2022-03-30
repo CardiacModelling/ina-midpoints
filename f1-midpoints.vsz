@@ -1,7 +1,6 @@
 # Veusz saved document (version 3.3.1)
 # Saved at 2022-03-29T18:14:07.418663
 
-AddImportPath(u'/home/michael/dev/ina-midpoints')
 ImportFileCSV(u'data-out/midpoint-correlations.csv', headermode=u'1st', linked=True, numericlocale=u'C')
 ImportFileCSV(u'data-out/midpoints-myo-a-00-all.csv', headermode=u'1st', linked=True, dsprefix=u'midpoints-w-myo-a-00-all.csv_')
 ImportFileCSV(u'data-out/midpoints-myo-i-00-all.csv', headermode=u'1st', linked=True, dsprefix=u'midpoints-w-myo-i-00-all.csv_')

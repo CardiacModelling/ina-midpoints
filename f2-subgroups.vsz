@@ -1,7 +1,6 @@
 # Veusz saved document (version 3.3.1)
 # Saved at 2022-03-30T07:18:26.250674
 
-AddImportPath(u'/home/michael/dev/ina-midpoints')
 ImportFileCSV(u'data-out/midpoints-wt-a-01-isoform-a.csv', headermode=u'1st', linked=True, dsprefix=u'midpoints-w-wt-a-01-isoform-a.csv-')
 ImportFileCSV(u'data-out/midpoints-wt-a-02-isoform-b.csv', headermode=u'1st', linked=True, dsprefix=u'midpoints-w-wt-a-02-isoform-b.csv-')
 ImportFileCSV(u'data-out/midpoints-wt-a-03-isoform-a-star.csv', headermode=u'1st', linked=True, dsprefix=u'midpoints-w-wt-a-03-isoform-a-star.csv-')
