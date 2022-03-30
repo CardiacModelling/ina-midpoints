@@ -46,5 +46,5 @@ The figures can be recreated using [Veusz](https://veusz.github.io/).
 - Number of reports of both `Va` and `Vi` shown by `f1cd-correlations.py`
 - Linear regression numbers shown by `f1cd-correlations.py`
 - Standard deviation of "correlation-corrected" Vi shown by `f1cd-correlations.py`
-
+- Minimum and maximum temperatures: `d3-temperatures.py`
 
