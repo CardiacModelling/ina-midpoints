@@ -7,13 +7,13 @@ This repository contains the data and code accompanying the paper
 > Published somewhere
 > DOI
 
-The data is all derived from an sqlite database [data-in/mutations.sqlite] that was created in 2016 for the study
+The data is all derived from an sqlite database (see `data-in/mutations.sqlite`) that was created in 2016 for the study
 
 > Predicting changes to INa from missense mutations in human SCN5A
 > Michael Clerx, Jordi Heijman, Pieter Collins, Paul G.A. Volders
 > Scientific Reports
 > https://doi.org/10.1038/s41598-018-30577-5
-> https://github.com/MichaelClerx/mutations-scn5a
+> and https://github.com/MichaelClerx/mutations-scn5a
 
 ## Requirements
 
