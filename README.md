@@ -40,11 +40,12 @@ The figures can be recreated using [Veusz](https://veusz.github.io/).
 ### Text
 - Number of studies surveyed from `d1-counts.py`
 - Total number of reports (1 or more per publication) of `Va` and/or `Vi` from `d1-counts.py`
-- Standard deviation of `Va` (lowest, mean, highest) from `d2-sigmas.py`
-- Standard deviation of `Vi` (lowest, mean, highest) from `d2-sigmas.py`
+- Range of `Va` and `Vi` from `d2-means.py`
+- Standard deviation of `Va` (lowest, mean, highest) from `d3-sigmas.py`
+- Standard deviation of `Vi` (lowest, mean, highest) from `d3-sigmas.py`
 - Standard deviation of summed `Va` from `f1ab-midpoints.py`
 - Number of reports of both `Va` and `Vi` shown by `f1cd-correlations.py`
 - Linear regression numbers shown by `f1cd-correlations.py`
 - Standard deviation of "correlation-corrected" Vi shown by `f1cd-correlations.py`
-- Minimum and maximum temperatures: `d3-temperatures.py`
+- Minimum and maximum temperatures: `d4-temperatures.py`
 
