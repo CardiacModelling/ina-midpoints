@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 #
-# Create a TeX table of all reported midpoints.
+# Create a tex table of all reported midpoints.
 #
 import base
+
 
 filename = 't2-all-midpoints.tex'
 

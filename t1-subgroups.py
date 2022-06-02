@@ -21,62 +21,62 @@ def midpoints_wt(con):
     a = 'select pub, va, sema, na, stda from midpoints_wt'
     i = 'select pub, vi, semi, ni, stdi from midpoints_wt'
     do('Act; Combined', a)
-    do('Inact; Combined', r)
+    do('Inact; Combined', i)
 
     # HEK, a*, beta1
     r = ' where sequence == "astar" and cell == "HEK" and beta1 == "yes"'
-    do('Act; Common'a + r)
-    do('Inact; Common'i + r)
+    do('Act; Common', a + r)
+    do('Inact; Common', i + r)
 
     # Isoform a
     r = ' where sequence == "a"'
-    do('Act; Isoform a'a + r)
-    do('Inact; Isoform a'i + r)
+    do('Act; Isoform a', a + r)
+    do('Inact; Isoform a', i + r)
 
     # Isoform b
     r = ' where sequence == "b"'
-    do('Act; Isoform b'a + r)
-    do('Inact; Isoform b'i + r)
+    do('Act; Isoform b', a + r)
+    do('Inact; Isoform b', i + r)
 
     # Isoform a*
     r = ' where sequence == "astar"'
-    do('Act; Isoform a*'a + r)
-    do('Inact; Isoform a*'i + r)
+    do('Act; Isoform a*', a + r)
+    do('Inact; Isoform a*', i + r)
 
     # Isoform b*
     r = ' where sequence == "bstar"'
-    do('Act; Isoform b*'a + r)
-    do('Inact; Isoform b*'i + r)
+    do('Act; Isoform b*', a + r)
+    do('Inact; Isoform b*', i + r)
 
     # Isoform unknown
     r = ' where sequence is null'
-    do('Act; Isoform ?'a + r)
-    do('Inact; Isoform ?'i + r)
+    do('Act; Isoform ?', a + r)
+    do('Inact; Isoform ?', i + r)
 
     # With beta1
     r = ' where beta1 == "yes"'
-    do('Act; With beta1'a + r)
-    do('Inact; With beta1'i + r)
+    do('Act; With beta1', a + r)
+    do('Inact; With beta1', i + r)
 
     # Without beta1
     r = ' where beta1 == "no"'
-    do('Act; Without beta1'a + r)
-    do('Inact; Without beta1'i + r)
+    do('Act; Without beta1', a + r)
+    do('Inact; Without beta1', i + r)
 
     # HEK
     r = ' where cell == "HEK"'
-    do('Act; HEK'a + r)
-    do('Inact; HEK'i + r)
+    do('Act; HEK', a + r)
+    do('Inact; HEK', i + r)
 
     # CHO
     r = ' where cell == "CHO"'
-    do('Act; CHO'a + r)
-    do('Inact; CHO'i + r)
+    do('Act; CHO', a + r)
+    do('Inact; CHO', i + r)
 
     # Oocytes
     r = ' where cell == "Oocyte"'
-    do('Act; Oocyte'a + r)
-    do('Inact; Oocyte'i + r)
+    do('Act; Oocyte', a + r)
+    do('Inact; Oocyte', i + r)
 
     return rows
 
@@ -152,7 +152,6 @@ with base.connect() as con:
     base.table(head, wt)
     print()
 
-
-    # Write partial tex table
+    # Write tex table
     tex_table_wt(wt, 't1-subgroups.tex')
 
