@@ -3,9 +3,8 @@
 # Calculates statistics about the standard deviations reported in the midpoints
 # data.
 #
-import numpy as np
-
 import base
+
 
 with base.connect() as con:
     c = con.cursor()

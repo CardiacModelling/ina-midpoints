@@ -7,6 +7,7 @@ import numpy as np
 
 import base
 
+
 q = 'select pub, na, ni, stda, stdi, sema, semi from midpoints_wt'
 
 # Query db

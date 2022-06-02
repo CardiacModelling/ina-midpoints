@@ -6,6 +6,7 @@ import numpy as np
 
 import base
 
+
 q = 'select vi, ni, va, na from midpoints_wt'
 
 # Query db

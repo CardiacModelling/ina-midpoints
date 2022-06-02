@@ -90,5 +90,5 @@ def table(head, rows):
 #
 # Import functions and classes
 #
-from ._connection import connect    # noqa
-
+from ._connection import connect        # noqa
+from ._analysis import combined_pdf     # noqa
