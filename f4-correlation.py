@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 #
-# Figure 3: Individual reports
+# Figure 4: Correlation between Va and Vi
 #
+import os
+
 import matplotlib
 import matplotlib.pyplot as plt
 
@@ -12,6 +14,7 @@ import base
 print('Gathering data')
 with base.connect() as con:
     c = con.cursor()
+
 
     q = ('select vi, semi, stdi, sequence, beta1, cell from midpoints_wt'
          ' where ni > 0 order by vi')
@@ -88,6 +91,6 @@ elements = [
 ax.legend(loc=(-0.04, 0.80), frameon=False, handles=elements)
 
 
-fname = 'f3-reports.pdf'
+fname = 'f4-correlation.pdf'
 print(f'Saving to {fname}')
 fig.savefig(fname)

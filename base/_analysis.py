@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Provides a connection to the mutation database.
+# Shared analysis
 #
 import numpy as np
 import scipy.stats
@@ -14,7 +14,60 @@ def gaussian(x, mu, sigma):
         -np.power((x - mu) / sigma, 2) * 0.5)
 
 
-def combined_pdf(rows, individual=False):
+def individual_pdfs(rows):
+    """
+    Gathers data from the provided ``rows``, calculates a PDF for each entry
+    with n>0, and returns a list of tuples with information.
+
+    Arguments:
+
+    ``rows``
+        Each row in ``rows`` must contain five columns in the order
+        ``(name, v, sem, n, std)``.
+
+    Returns a list of tuples, where each row contains:
+
+    ``pub``
+        The name of the publication
+    ``n``
+        The total number of cells.
+    ``x``
+        X-coordinates for a gaussian distribution.
+    ``y``
+        Y-coordinates for a weighted gaussian distribution.
+    ``mu``
+        The mean.
+    ``sigma``
+        The standard deviation.
+
+    """
+    # Create x-data and y-data
+    x = np.linspace(-140, 20, 1000)
+    y = np.zeros(x.shape)
+
+    # Gather data from rows
+    data = []
+    for k, row in enumerate(rows):
+        pub, v, sem, n, std = row
+
+        # Skip rows without act/inact measurement
+        if n == 0:
+            continue
+
+        # Check std calculation
+        if np.abs(std - sem * np.sqrt(n)) > 1e-6:
+            print(f'Warning: Error in STD for {pub}')
+            print(f'  Listed    : {std}')
+            print(f'  Calculated: {sem * np.sqrt(n)}')
+
+        # Calculate and store weighted PDF
+        y = n * gaussian(x, v, std)
+        data.append((pub, int(n), x, y, v, std))
+
+    return data
+
+
+def combined_pdf(rows):
     """
     Gathers data from the provided ``rows``, calculates a combined PDF, and
     returns a tuple of information.
@@ -24,16 +77,12 @@ def combined_pdf(rows, individual=False):
     ``rows``
         Each row in ``rows`` must contain five columns in the order
         ``(name, v, sem, n, std)``.
-    ``individual``
-        If true, PDF info for each individual row will be returned (see below).
 
     Returns a tuple:
 
     ``data``
         A tuple ``(x, sum, gauss)`` containing x coordinates, a summed and
         weighted PDF, and a Gaussian approximation.
-        If ``individual`` is set to ``True`` these will be followed by a PDF
-        for each of the individual rows.
     ``m``
         The number of reports.
     ``n``
@@ -87,7 +136,6 @@ def combined_pdf(rows, individual=False):
 
     # Create probability density functions
     nmeasurements = len(fields)
-    pdfs = {}
     for field in fields:
         v, std, n = data[field]
 
@@ -96,10 +144,6 @@ def combined_pdf(rows, individual=False):
 
         # Update sum
         y += pdf
-
-        # Store reduced data
-        if individual:
-            pdfs[field] = pdf[::xf]
     del(data)
 
     # Calculate mean and standard deviation
@@ -124,14 +168,9 @@ def combined_pdf(rows, individual=False):
     # Draw gaussian curve
     z = gaussian(x, mu, sigma)
 
-    # Create output
-    data = [x, y, z]
-    if individual:
-        data += [pdfs[f] for f in fields]
-
     # Two-sigma range
     lo = mu - 2 * sigma
     hi = mu + 2 * sigma
 
     # Return
-    return (data, nmeasurements, int(ntotal), mu, sigma, lo, hi, p)
+    return ([x, y, z], nmeasurements, int(ntotal), mu, sigma, lo, hi, p)

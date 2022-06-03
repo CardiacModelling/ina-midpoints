@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Create a tex table of all reported midpoints.
+# Creates a tex table of all reported midpoints.
 #
 import base
 
@@ -29,6 +29,7 @@ fields = [
     'beta1',
 ]
 
+
 # Sequence formatting
 def seq(s):
     if s == 'astar':
@@ -39,32 +40,31 @@ def seq(s):
         return '?'
     return s
 
+
 # Create table
 print(f'Writing to {filename}...')
 with open(filename, 'w') as f:
     # Header
-    size = 'footnotesize'
-    f.write('\\begin{' + size + '}\n')
-    f.write('\\startrowcolors\n')
-    f.write('\\begin{longtable}{p{5cm}|lll|lll|lll}\n')
-    f.write('\\caption{\\label{midpoints}Midpoints} \\\\\n')
-    f.write('\\hline\n')
+    eol = '\n'
+    f.write(r'\startrowcolors' + eol)
+    f.write(r'\begin{longtable}{p{5cm}|lll|lll|lll}' + eol)
+    f.write(r'\hline' + eol)
+    f.write(r'Publication')
+    f.write(r' & $V_a$ & $\sigma_a$  & $n_a$')
+    f.write(r' & $V_i$ & $\sigma_i$  & $n_i$')
+    f.write(r' & Cell & $\alpha$ & $\beta1$ \\' + eol)
+    f.write(r'\hline' + eol)
+    f.write(r'\endfirsthead' + eol)
+    f.write(r'\hline' + eol)
+    f.write(r'\rowcolor{white}' + eol)
     f.write('Publication')
-    f.write(' & $V_a$ & $\sigma_a$  & $n_a$')
-    f.write(' & $V_i$ & $\sigma_i$  & $n_i$')
-    f.write(' & Cell & $\\alpha$ & $\\beta1$ \\\\\n')
-    f.write('\\hline\n')
-    f.write('\\endfirsthead')
-    f.write('\\hline\n')
-    f.write('\\rowcolor{white}\n')
-    f.write('Publication')
-    f.write(' & $V_a$ & $\sigma_a$  & $n_a$')
-    f.write(' & $V_i$ & $\sigma_i$  & $n_i$')
-    f.write(' & Cell & $\\alpha$ & $\\beta1$ \\\\\n')
-    f.write('\\hline\n')
-    f.write('\\endhead\n')
-    f.write('\\hline\n')
-    f.write('\\endfoot\n')
+    f.write(r' & $V_a$ & $\sigma_a$  & $n_a$')
+    f.write(r' & $V_i$ & $\sigma_i$  & $n_i$')
+    f.write(r' & Cell & $\alpha$ & $\beta1$ \\' + eol)
+    f.write(r'\hline' + eol)
+    f.write(r'\endhead' + eol)
+    f.write(r'\hline' + eol)
+    f.write(r'\endfoot' + eol)
     # Body
     form = '{:.3g}'
     with base.connect() as con:
@@ -72,7 +72,7 @@ with open(filename, 'w') as f:
         q = 'select ' + ', '.join(fields) + ' from midpoints_wt'
         for k, row in enumerate(c.execute(q)):
             x = []
-            x.append('\\citet{' + refs[row['pub']] + '}')
+            x.append(r'\citet{' + refs[row['pub']] + '}')
             if row['na'] != 0:
                 x.append(form.format(row['va']))
                 x.append(form.format(row['stda']))
@@ -88,8 +88,8 @@ with open(filename, 'w') as f:
             x.append(row['cell'].replace('Oocyte', 'Ooc.'))
             x.append(seq(row['sequence']))
             x.append(row['beta1'])
-            f.write(' & '.join(x) + ' \\\\\n')
+            f.write(' & '.join(x) + r' \\' + eol)
     # Footer
-    f.write('\\end{longtable}\n')
-    f.write('\\end{' + size + '}\n')
+    f.write(r'\end{longtable}' + eol)
+
 print('Done.')

@@ -2,8 +2,6 @@
 #
 # Creates a table of statistics about the total data and all subgroups.
 #
-import os
-
 import base
 
 
@@ -124,17 +122,17 @@ def tex_table_wt(rows, filename):
         f.write(r' \\ \hline' + '\n')
 
         f.write(row(f, 'Combined'))
-        f.write(row(f, 'Common', r'HEK, a*, \bet1'))
-        f.write('\hline\n')
+        f.write(row(f, r'Common', r'HEK, a*, \bet1'))
+        f.write(r'\hline\n')
         f.write(row(f, 'Isoform a'))
         f.write(row(f, 'Isoform b'))
         f.write(row(f, 'Isoform a*'))
         f.write(row(f, 'Isoform b*'))
         f.write(row(f, 'Isoform ?', 'Unknown'))
-        f.write('\hline\n')
+        f.write(r'\hline\n')
         f.write(row(f, 'With beta1', r'With \bet1'))
         f.write(row(f, 'Without beta1', r'Without \bet1'))
-        f.write('\hline\n')
+        f.write(r'\hline\n')
         f.write(row(f, 'HEK'))
         f.write(row(f, 'CHO'))
         f.write(row(f, 'Oocyte'))

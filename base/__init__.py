@@ -90,5 +90,13 @@ def table(head, rows):
 #
 # Import functions and classes
 #
-from ._connection import connect        # noqa
-from ._analysis import combined_pdf     # noqa
+from ._connection import (  # noqa
+    connect,
+)
+from ._analysis import (    # noqa
+    combined_pdf,
+    individual_pdfs,
+)
+from ._plot import (        # noqa
+    axletter,
+)

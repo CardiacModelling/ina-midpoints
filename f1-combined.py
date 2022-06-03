@@ -1,210 +1,105 @@
 #!/usr/bin/env python3
 #
-# Creates data for a graph of V1/2 of activation & inactivation of wild-type
-# channels in expression systems and myocyte data.
+# Figure 1: Reconstructed histograms of midpoints of inactivation and
+# activation.
 #
-# Also writes t1-midpoints.tex
-#
-import os
-
+import matplotlib
+import matplotlib.pyplot as plt
 import numpy as np
-import scipy.stats
 
 import base
 
 
+# Get data
+with base.connect() as con:
 
-
-
-
-
-
-def midpoints_wt(con):
-    """
-    Create summed PDFs of midpoint data for WT expression system experiments.
-    """
+    # Get myocyte data
     c = con.cursor()
-    rows = []
+    q = 'select pub, va, sema, na, stda from midpoints_myo'
+    da_myo = base.individual_pdfs(c.execute(q))
+    q = 'select pub, vi, semi, ni, stdi from midpoints_myo'
+    di_myo = base.individual_pdfs(c.execute(q))
 
-    # All data
     a = 'select pub, va, sema, na, stda from midpoints_wt'
     i = 'select pub, vi, semi, ni, stdi from midpoints_wt'
-    filename = 'midpoints-wt-a-00-all.csv'
-    rows.append(['Act; Combined'] + gather(filename, c.execute(a)))
-    filename = 'midpoints-wt-i-00-all.csv'
-    rows.append(['Inact; Combined'] + gather(filename, c.execute(i)))
+    da_wt = base.combined_pdf(c.execute(a))
+    di_wt = base.combined_pdf(c.execute(i))
 
-    # HEK, a*, beta1
-    r = ' where sequence == "astar" and cell == "HEK" and beta1 == "yes"'
-    filename = 'midpoints-wt-a-11-most-common.csv'
-    rows.append(['Act; Common'] + gather(filename, c.execute(a + r)))
-    filename = 'midpoints-wt-i-11-most-common.csv'
-    rows.append(['Inact; Common'] + gather(filename, c.execute(i + r)))
-
-    # Isoform a
-    r = ' where sequence == "a"'
-    filename = 'midpoints-wt-a-01-isoform-a.csv'
-    rows.append(['Act; Isoform a'] + gather(filename, c.execute(a + r)))
-    filename = 'midpoints-wt-i-01-isoform-a.csv'
-    rows.append(['Inact; Isoform a'] + gather(filename, c.execute(i + r)))
-
-    # Isoform b
-    r = ' where sequence == "b"'
-    filename = 'midpoints-wt-a-02-isoform-b.csv'
-    rows.append(['Act; Isoform b'] + gather(filename, c.execute(a + r)))
-    filename = 'midpoints-wt-i-02-isoform-b.csv'
-    rows.append(['Inact; Isoform b'] + gather(filename, c.execute(i + r)))
-
-    # Isoform a*
-    r = ' where sequence == "astar"'
-    filename = 'midpoints-wt-a-03-isoform-a-star.csv'
-    rows.append(['Act; Isoform a*'] + gather(filename, c.execute(a + r)))
-    filename = 'midpoints-wt-i-03-isoform-a-star.csv'
-    rows.append(['Inact; Isoform a*'] + gather(filename, c.execute(i + r)))
-
-    # Isoform b*
-    r = ' where sequence == "bstar"'
-    filename = 'midpoints-wt-a-04-isoform-b-star.csv'
-    rows.append(['Act; Isoform b*'] + gather(filename, c.execute(a + r)))
-    filename = 'midpoints-wt-i-04-isoform-b-star.csv'
-    rows.append(['Inact; Isoform b*'] + gather(filename, c.execute(i + r)))
-
-    # Isoform unknown
-    r = ' where sequence is null'
-    filename = 'midpoints-wt-a-05-isoform-unknown.csv'
-    rows.append(['Act; Isoform ?'] + gather(filename, c.execute(a + r)))
-    filename = 'midpoints-wt-i-05-isoform-unknown.csv'
-    rows.append(['Inact; Isoform ?'] + gather(filename, c.execute(i + r)))
-
-    # With beta1
-    r = ' where beta1 == "yes"'
-    filename = 'midpoints-wt-a-09-with-beta1.csv'
-    rows.append(['Act; With beta1'] + gather(filename, c.execute(a + r)))
-    filename = 'midpoints-wt-i-09-with-beta1.csv'
-    rows.append(['Inact; With beta1'] + gather(filename, c.execute(i + r)))
-
-    # Without beta1
-    r = ' where beta1 == "no"'
-    filename = 'midpoints-wt-a-10-without-beta1.csv'
-    rows.append(['Act; Without beta1'] + gather(filename, c.execute(a + r)))
-    filename = 'midpoints-wt-i-10-without-beta1.csv'
-    rows.append(['Inact; Without beta1'] + gather(filename, c.execute(i + r)))
-
-    # HEK
-    r = ' where cell == "HEK"'
-    filename = 'midpoints-wt-a-06-hek.csv'
-    rows.append(['Act; HEK'] + gather(filename, c.execute(a + r)))
-    filename = 'midpoints-wt-i-06-hek.csv'
-    rows.append(['Inact; HEK'] + gather(filename, c.execute(i + r)))
-
-    # CHO
-    r = ' where cell == "CHO"'
-    filename = 'midpoints-wt-a-08-cho.csv'
-    rows.append(['Act; CHO'] + gather(filename, c.execute(a + r)))
-    filename = 'midpoints-wt-i-08-cho.csv'
-    rows.append(['Inact; CHO'] + gather(filename, c.execute(i + r)))
-
-    # Oocytes
-    r = ' where cell == "Oocyte"'
-    filename = 'midpoints-wt-a-07-oocytes.csv'
-    rows.append(['Act; Oocyte'] + gather(filename, c.execute(a + r)))
-    filename = 'midpoints-wt-i-07-oocytes.csv'
-    rows.append(['Inact; Oocyte'] + gather(filename, c.execute(i + r)))
-
-    return rows
+myo_options = {
+    'Feng 1996': ['Feng atrium', 'k', ':', '|'],
+    'Sakakibara 1992': ['Sakakibara atrium', 'tab:purple', '-.', '/'],
+    'Sakakibara 1993': ['Sakakibara ventricle', 'tab:cyan', '-', '\\'],
+    'Schneider 1994': ['Schneider atrium', 'tab:olive', '--', '-'],
+}
+for a, i in zip(da_myo, di_myo):
+    if a[1] == i[1]:
+        myo_options[a[0]][0] += f' (n={a[1]})'
+    else:
+        myo_options[a[0]][0] += f' (n={i[1]}, {a[1]})'
 
 
-def midpoints_myo(con):
-    """
-    Create summed PDFs of midpoint data for human myocyte experiments.
-    """
-    c = con.cursor()
-    rows = []
+#
+# Create figure
+#
+print('Creating figure')
+fig = plt.figure(figsize=(6, 6))    # Two-third-column size
+fig.subplots_adjust(0.06, 0.075, 0.99, 0.99, hspace=0.12)
 
-    q = 'select pub, va, sema, na, stda from midpoints_myo'
-    filename = 'midpoints-myo-a-00-all.csv'
-    rows.append(['Act; myocytes'] + gather(filename, c.execute(q), True))
-    q = 'select pub, vi, semi, ni, stdi from midpoints_myo'
-    filename = 'midpoints-myo-i-00-all.csv'
-    rows.append(['Inact; myocytes'] + gather(filename, c.execute(q), True))
+xlim = -120, -10
 
-    return rows
+ax = fig.add_subplot(2, 1, 1)
+for s in ax.spines.values():
+    s.set_visible(False)
+ax.spines['bottom'].set_visible(True)
+ax.xaxis.set_minor_locator(matplotlib.ticker.MultipleLocator(5))
+ax.get_yaxis().set_visible(False)
+ax.set_xlim(*xlim)
+ax.set_xticklabels([])
+ax.set_ylim(0, 3.6)
+offset, tweak = -0.04, 0
+base.axletter(ax, 'A', offset=offset, tweak=tweak)
 
-
-def tex_table_wt(rows, filename):
-
-    # Turn rows into dict
-    data = {}
-    for row in rows:
-        data[row[0]] = row[1:]
-
-    def row(f, key, fancyname=None):
-        if not fancyname:
-            fancyname = key
-
-        # Convert a table row to a tex table row
-        #        0           1     2    3    4   5   6
-        # [nmeasurements, ntotal, mu, sigma, lo, hi, p]
-        a = data['Act; ' + key]
-        b = data['Inact; ' + key]
-        return ' & '.join((
-            fancyname,
-            f'{a[2]:3.3g}',
-            f'{a[3]:3.3g}',
-            f'{a[4]:3.3g}, {a[5]:3.3g}',
-            str(a[0]),
-            str(a[1]),
-            f'{b[2]:3.3g}',
-            f'{b[3]:3.3g}',
-            f'{b[4]:3.3g}, {b[5]:3.3g}',
-            str(b[0]),
-            str(b[1]),
-        )) + r' \\' + '\n'
-
-    # Build table
-    print(f'Writing table to {filename}')
-    with open(filename, 'w') as f:
-        f.write(r'\begin{tabular}{l | lll | cc | lll | cc}' + '\n')
-        f.write(r'\hline' + '\n')
-        f.write(r'\multicolumn{1}{l|}{}')
-        f.write(r' & \multicolumn{5}{l|}{Activation}')
-        f.write(r' & \multicolumn{5}{l}{Inactivation} \\ \hline' + '\n')
-        f.write(r'{} & $\mu_a$ & $\sigma_a$ & $r_{2\sigma,a}$ & m & n' + '\n')
-        f.write(r'   & $\mu_i$ & $\sigma_i$ & $r_{2\sigma,i}$ & m & n')
-        f.write(r' \\ \hline' + '\n')
-
-        f.write(row(f, 'Combined'))
-        f.write(row(f, 'Common', r'HEK, a*, \bet1'))
-        f.write('\hline\n')
-        f.write(row(f, 'Isoform a'))
-        f.write(row(f, 'Isoform b'))
-        f.write(row(f, 'Isoform a*'))
-        f.write(row(f, 'Isoform b*'))
-        f.write(row(f, 'Isoform ?', 'Unknown'))
-        f.write('\hline\n')
-        f.write(row(f, 'With beta1', r'With \bet1'))
-        f.write(row(f, 'Without beta1', r'Without \bet1'))
-        f.write('\hline\n')
-        f.write(row(f, 'HEK'))
-        f.write(row(f, 'CHO'))
-        f.write(row(f, 'Oocyte'))
-
-        f.write(r'\hline' + '\n')
-        f.write(r'\end{tabular}' + '\n')
+grey = '#bbbbbb'
+for pub, n, x, y, mu, sigma in di_myo:
+    label, color, ls, hatch = myo_options[pub]
+    ax.plot((mu, mu), (0, np.max(y)), color=grey, zorder=0, lw=1)
+    ax.plot(x, y, color=color, ls=ls, label=label)
+for pub, n, x, y, mu, sigma in da_myo:
+    label, color, ls, hatch = myo_options[pub]
+    ax.plot((mu, mu), (0, np.max(y)), color=grey, zorder=0, lw=1)
+    ax.plot(x, y, color=color, ls=ls)
+    #ax.fill_between(x, y, fc='none', ec=color, hatch=hatch, zorder=0)
+ax.legend(loc=(0, 0.85), frameon=False, ncol=2)
 
 
-with base.connect() as con:
-    myo = midpoints_myo(con)
-    wt = midpoints_wt(con)
+ax = fig.add_subplot(2, 1, 2)
+for s in ax.spines.values():
+    s.set_visible(False)
+ax.spines['bottom'].set_visible(True)
+ax.xaxis.set_minor_locator(matplotlib.ticker.MultipleLocator(5))
+ax.get_yaxis().set_visible(False)
+ax.set_xlim(*xlim)
+ax.set_xlabel('Membrane potential (mV)')
+ax.set_ylim(0, 0.054)
+base.axletter(ax, 'B', offset=offset, tweak=tweak)
 
-    # Show tables
-    head = ['', 'reports', 'cells', 'mean', 'stddev', 'lo', 'hi', 'p']
-    print()
-    base.table(head, myo)
-    print()
-    base.table(head, wt)
-    print()
+xa, ya, za = da_wt[0]
+xi, yi, zi = di_wt[0]
+labela = f'Activation (m={da_wt[1]}, n={da_wt[2]})'
+labeli = f'Inactivation (m={di_wt[1]}, n={di_wt[2]})'
+ca = 'tab:blue'
+ci = 'tab:orange'
 
-    # Write partial tex table
-    tex_table_wt(wt, 't1-subgroups.tex')
+ax.fill_between(xa, ya, ec=ca, fc='none', hatch='///')
+ax.fill_between(xi, yi, ec=ci, fc='none', hatch='\\\\\\')
+ax.plot(xa, ya, color=ca, label=labela)
+ax.plot(xi, yi, color=ci, label=labeli)
+ax.plot(xa, za, color=ca, ls='--', lw=3)
+ax.plot(xi, zi, color=ci, ls='--', lw=3)
 
+ax.legend(loc=(0, 0.85), frameon=False)
+
+# Save
+fname = 'f1-combined.pdf'
+print(f'Saving to {fname}')
+fig.savefig(fname)
