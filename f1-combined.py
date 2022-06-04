@@ -37,6 +37,14 @@ for a, i in zip(da_myo, di_myo):
     else:
         myo_options[a[0]][0] += f' (n={i[1]}, {a[1]})'
 
+# Show reconstructed histogram data
+print('Reconstructed Va distribution:')
+print(f'  mean : {da_wt[3]}')
+print(f'  sigma: {da_wt[4]}')
+print('Reconstructed Vi distribution:')
+print(f'  mean : {di_wt[3]}')
+print(f'  sigma: {di_wt[4]}')
+
 
 #
 # Create figure
@@ -89,11 +97,14 @@ labela = f'Activation (m={da_wt[1]}, n={da_wt[2]})'
 labeli = f'Inactivation (m={di_wt[1]}, n={di_wt[2]})'
 ca = 'tab:blue'
 ci = 'tab:orange'
+ma, mi = da_wt[3], di_wt[3]
 
 ax.fill_between(xa, ya, ec=ca, fc='none', hatch='///')
 ax.fill_between(xi, yi, ec=ci, fc='none', hatch='\\\\\\')
 ax.plot(xa, ya, color=ca, label=labela)
 ax.plot(xi, yi, color=ci, label=labeli)
+ax.plot((ma, ma), (0, np.max(za)), color=grey)
+ax.plot((mi, mi), (0, np.max(zi)), color=grey)
 ax.plot(xa, za, color=ca, ls='--', lw=3)
 ax.plot(xi, zi, color=ci, ls='--', lw=3)
 
