@@ -171,7 +171,9 @@ elements = [
 ]
 ax.legend(loc='lower right', handles=elements, framealpha=1)
 
+
 # Distance along line
+grey = '#bbbbbb'
 xlim2 = -35, 35
 ax01 = fig.add_subplot(grid[0, 1])
 ax01.set_xlabel('Distance to best fit line (mV)')
@@ -179,7 +181,8 @@ ax01.set_xlim(*xlim2)
 for s in ax01.spines.values():
     s.set_visible(False)
 ax01.spines['bottom'].set_visible(True)
-ax01.hist(d1s)
+ax01.get_yaxis().set_visible(False)
+ax01.hist(d1s, ec='k', fc=grey)
 
 # Distance to line
 ax11 = fig.add_subplot(grid[1, 1])
@@ -188,7 +191,12 @@ ax11.set_xlim(*xlim2)
 for s in ax11.spines.values():
     s.set_visible(False)
 ax11.spines['bottom'].set_visible(True)
-ax11.hist(d2s)
+ax11.get_yaxis().set_visible(False)
+ax11.hist(d2s, ec='k', fc=grey)
+
+base.axletter(ax, 'A', offset=-0.07, tweak=0.01)
+base.axletter(ax01, 'B', tweak=0.01)
+base.axletter(ax11, 'C')
 
 fname = 'f4-correlation.pdf'
 print(f'Saving to {fname}')
