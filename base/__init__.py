@@ -12,42 +12,11 @@ try:
 finally:
     del(frame)
 
-# Root directory
-DIR_ROOT = os.path.abspath(os.path.join(DIR, '..'))
-
-# Data input files
-DIR_DATA_IN = os.path.join(DIR_ROOT, 'data-in')
-
-# Data output files
-DIR_DATA_OUT = os.path.join(DIR_ROOT, 'data-out')
-
 # DB file
-PATH_DB = os.path.join(DIR_DATA_IN, 'mutations.sqlite')
-
-# Ensure output paths exist
-if not os.path.isdir(DIR_DATA_OUT):
-    print(f'Creating directory {DIR_DATA_OUT}')
-    os.makedirs(DIR_DATA_OUT)
+PATH_DB = os.path.join(DIR, 'mutations.sqlite')
 
 # Delete imported libraries
 del(os, inspect)
-
-
-# CSV File options
-CSV_OPTIONS = {
-    'delimiter': ',',
-    'quotechar': '"',
-    'skipinitialspace': True,
-}
-
-
-def csv_writer(filehandle):
-    """
-    Returns a csv writer for the given filehandle, initialized with the
-    default options.
-    """
-    import csv
-    return csv.writer(filehandle, **CSV_OPTIONS)
 
 
 def table(head, rows):
