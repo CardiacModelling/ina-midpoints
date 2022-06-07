@@ -18,18 +18,20 @@ with base.connect() as con:
 
     # Get all data
     def get(query):
-        """ Return rows of [pub, va, vi, stda, stdi]. """
-        pub, va, vi, stda, stdi = [], [], [], [], []
+        """ Return rows of [pub, va, vi, stda, stdi, na, ni]. """
+        pub, va, vi, stda, stdi, na, ni = [], [], [], [], [], [], []
         for row in c.execute(query):
             pub.append(row['pub'])
             va.append(row['va'])
             vi.append(row['vi'])
             stda.append(row['stda'])
             stdi.append(row['stdi'])
-        return pub, va, vi, stda, stdi
+            na.append(row['na'])
+            ni.append(row['ni'])
+        return pub, va, vi, stda, stdi, na, ni
 
     # Get all data, plus data split into biggest subset and rest
-    q = ('select pub, va, stda, vi, stdi from midpoints_wt'
+    q = ('select pub, va, stda, vi, stdi, na, ni from midpoints_wt'
          ' where (stda != 0 AND stdi != 0)')
     d_all = get(q)
     w = 'sequence == "astar" and beta1 == "yes" and cell == "HEK"'
@@ -38,48 +40,6 @@ with base.connect() as con:
          ' or sequence is null or beta1 is null or cell is null')
     d_not = get(q + ' and (' + w + ')')
 
-'''
-#
-# Correct with linear regression
-#
-# Gather data
-va = []
-vi = []
-for row in data:
-    va.append(row[1])
-    vi.append(row[3])
-va = np.array(va)
-vi = np.array(vi)
-
-# Fit line
-b, a = np.polyfit(va, vi, 1)
-
-# Subtract and write to file
-path = os.path.join(base.DIR_DATA_OUT, filename2)
-print(f'Writing to {os.path.relpath(path)}')
-with open(path, 'w') as f:
-    csv = base.csv_writer(f)
-    csv.writerow(['pub', 'va', '+-', 'vic', '+-'])
-    for k, row in enumerate(data):
-        row = list(row[:-1])
-        row[3] = row[3] - (a + b * row[1])
-        csv.writerow(row)
-
-# Get Pearson correlation coefficient
-p = np.corrcoef(va, vi)[1, 0]
-
-# Get standard deviation of Va - Vi
-sd_diff = np.std(va - vi)
-
-# Return row
-
-    The returned row contains the fields ``(nreports, a, b, p, sd_diff)``,
-    where ``nreports`` is the number of reports used, ``a`` and ``b`` are the
-    regression offset and slope, ``p`` is the Pearson correlation coefficient,
-    and ``sd_diff`` is the standard deviation of ``V_a - V_i``.
-
-return [len(data), a, b, p, sd_diff]
-'''
 
 # Fit line
 va, vi = d_all[1], d_all[2]
@@ -114,7 +74,7 @@ ax.set_xlim(*xlim)
 ax.set_ylim(-120, -50)
 
 # Ellipses
-for va, vi, stda, stdi in zip(*d_all[1:]):
+for va, vi, stda, stdi in zip(*d_all[1:5]):
     e = matplotlib.patches.Ellipse(
         (va, vi), width=4*stda, height=4*stdi,
         facecolor='blue', edgecolor='k', alpha=0.05)
@@ -145,7 +105,7 @@ for va, vi in zip(d_all[1], d_all[2]):
 
     d1s.append(d1)
     d2s.append(d2)
-
+d1s, d2s = np.array(d1s), np.array(d2s)
 
 # Linear fit
 l1 = ax.plot(xlim, a1 + b1 * xlim, '-', color='tab:pink',
@@ -201,3 +161,29 @@ base.axletter(ax11, 'C')
 fname = 'f4-correlation.pdf'
 print(f'Saving to {fname}')
 fig.savefig(fname)
+
+
+#
+# Versus n
+#
+print('Creating figure')
+fig = plt.figure(figsize=(9, 4.6))    # Two column size
+fig.subplots_adjust(0.08, 0.10, 0.97, 0.98, hspace=0.4)
+
+ax = fig.add_subplot(1, 2, 1)
+ax.set_xlabel('Study size ($\sqrt{n_a + n_i}$)')
+ax.set_ylabel('Distance to best fit line')
+na, ni = np.array(d_all[5]), np.array(d_all[6])
+ax.plot(np.sqrt(na + ni), d1s, 'o')
+
+ax = fig.add_subplot(1, 2, 2)
+ax.set_xlabel('Study size ($\sqrt{n_a + n_i}$)')
+ax.set_ylabel('Distance along best fit line')
+na, ni = np.array(na), np.array(ni)
+ax.plot(np.sqrt(na + ni), d2s, 'o')
+
+
+fname = 'f5-study-size.pdf'
+print(f'Saving to {fname}')
+fig.savefig(fname)
+
