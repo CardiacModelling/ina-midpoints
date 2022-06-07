@@ -17,3 +17,16 @@ with base.connect() as con:
     row = next(c.execute('select count(distinct(pub)) from midpoints_wt'))
     print(f'Total publications: {row[0]}')
 
+    # Count Va measurements
+    row = next(c.execute('select count(va) from midpoints_wt where na > 0'))
+    print(f'Total Va reports: {row[0]}')
+
+    # Count Vi measurements
+    row = next(c.execute('select count(vi) from midpoints_wt where ni > 0'))
+    print(f'Total Vi reports: {row[0]}')
+
+    # Count Va + Vi measurements
+    row = next(c.execute(
+        'select count(vi) from midpoints_wt where ni > 0 and na > 0'))
+    print(f'Total Va+Vi reports: {row[0]}')
+

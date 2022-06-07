@@ -5,7 +5,7 @@
 import base
 
 
-filename = 't2-all-midpoints.tex'
+filename = 't1-all-midpoints.tex'
 
 # Collect journal references
 refs = {}

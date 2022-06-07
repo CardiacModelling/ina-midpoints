@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 #
-# Figure 4: Correlation between Va and Vi
+# Figure 3: Correlation between Va and Vi
 #
-import os
-
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
@@ -52,7 +50,7 @@ print(f'  Pearson correlation coefficient: {p1}')
 va, vi = d_big[1], d_big[2]
 p2 = np.corrcoef(va, vi)[1, 0]
 b2, a2 = np.polyfit(va, vi, 1)
-print(f'Fit to biggest subgroup')
+print('Fit to biggest subgroup')
 print(f'  a, b: {a2}, {b2}')
 print(f'  Pearson correlation coefficient: {p2}')
 
@@ -61,7 +59,7 @@ print(f'  Pearson correlation coefficient: {p2}')
 #
 print('Creating figure')
 fig = plt.figure(figsize=(9, 4.6))    # Two column size
-fig.subplots_adjust(0.08, 0.10, 0.97, 0.98, hspace=0.4)
+fig.subplots_adjust(0.08, 0.10, 0.97, 0.98, hspace=0.4, wspace=0.3)
 
 grid = fig.add_gridspec(2, 2)
 
@@ -76,7 +74,7 @@ ax.set_ylim(-120, -50)
 # Ellipses
 for va, vi, stda, stdi in zip(*d_all[1:5]):
     e = matplotlib.patches.Ellipse(
-        (va, vi), width=4*stda, height=4*stdi,
+        (va, vi), width=4 * stda, height=4 * stdi,
         facecolor='blue', edgecolor='k', alpha=0.05)
     ax.add_artist(e)
 
@@ -110,7 +108,6 @@ d1s, d2s = np.array(d1s), np.array(d2s)
 # Linear fit
 l1 = ax.plot(xlim, a1 + b1 * xlim, '-', color='tab:pink',
              label=f'{a1:.2f} mV + {b1:.2f} $V_a$')
-#l2 = ax.plot(xlim, a2 + b2 * xlim, '--', color='tab:brown', label='Fit to subgroup')
 
 # Midpoints
 m = 'o'
@@ -127,63 +124,34 @@ elements = [
     matplotlib.lines.Line2D([0], [0], marker=m, color='b', ls='none',
                             label=r'$2\sigma$ range'),
     l1[0],
-#    l2[0],
 ]
 ax.legend(loc='lower right', handles=elements, framealpha=1)
 
-
-# Distance along line
-grey = '#bbbbbb'
-xlim2 = -35, 35
+# Principal components vs study size
+na, ni = np.array(d_all[5]), np.array(d_all[6])
+xlim = -35, 35
+vline = dict(color='#999999', ls='--')
 ax01 = fig.add_subplot(grid[0, 1])
-ax01.set_xlabel('Distance to best fit line (mV)')
-ax01.set_xlim(*xlim2)
-for s in ax01.spines.values():
-    s.set_visible(False)
-ax01.spines['bottom'].set_visible(True)
-ax01.get_yaxis().set_visible(False)
-ax01.hist(d1s, ec='k', fc=grey)
+ax01.set_xlabel('Second principal component')
+ax01.set_ylabel(r'Exp. size ($\sqrt{n_a + n_i}$)')
+ax01.set_xlim(*xlim)
+ax01.axvline(0, **vline)
+ax01.plot(d1s, np.sqrt(na + ni), 'o', markerfacecolor='none')
 
 # Distance to line
 ax11 = fig.add_subplot(grid[1, 1])
-ax11.set_xlabel('Distance along best fit line (mV)')
-ax11.set_xlim(*xlim2)
-for s in ax11.spines.values():
-    s.set_visible(False)
-ax11.spines['bottom'].set_visible(True)
-ax11.get_yaxis().set_visible(False)
-ax11.hist(d2s, ec='k', fc=grey)
+ax11.set_xlabel('First principal component')
+ax11.set_ylabel(r'Exp. size ($\sqrt{n_a + n_i}$)')
+ax11.set_xlim(*xlim)
+ax11.axvline(0, **vline)
+na, ni = np.array(na), np.array(ni)
+ax11.plot(d2s, np.sqrt(na + ni), 'o', markerfacecolor='none')
+
 
 base.axletter(ax, 'A', offset=-0.07, tweak=0.01)
-base.axletter(ax01, 'B', tweak=0.01)
-base.axletter(ax11, 'C')
+base.axletter(ax01, 'B', offset=-0.085, tweak=0.01)
+base.axletter(ax11, 'C', offset=-0.085)
 
-fname = 'f4-correlation.pdf'
+fname = 'f3-correlation.pdf'
 print(f'Saving to {fname}')
 fig.savefig(fname)
-
-
-#
-# Versus n
-#
-print('Creating figure')
-fig = plt.figure(figsize=(9, 4.6))    # Two column size
-fig.subplots_adjust(0.08, 0.10, 0.97, 0.98, hspace=0.4)
-
-ax = fig.add_subplot(1, 2, 1)
-ax.set_xlabel('Study size ($\sqrt{n_a + n_i}$)')
-ax.set_ylabel('Distance to best fit line')
-na, ni = np.array(d_all[5]), np.array(d_all[6])
-ax.plot(np.sqrt(na + ni), d1s, 'o')
-
-ax = fig.add_subplot(1, 2, 2)
-ax.set_xlabel('Study size ($\sqrt{n_a + n_i}$)')
-ax.set_ylabel('Distance along best fit line')
-na, ni = np.array(na), np.array(ni)
-ax.plot(np.sqrt(na + ni), d2s, 'o')
-
-
-fname = 'f5-study-size.pdf'
-print(f'Saving to {fname}')
-fig.savefig(fname)
-

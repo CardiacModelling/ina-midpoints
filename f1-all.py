@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Figure 3: Individual reports
+# Figure 1: All data
 #
 import matplotlib
 import matplotlib.pyplot as plt
@@ -13,10 +13,10 @@ print('Gathering data')
 with base.connect() as con:
     c = con.cursor()
 
-    q = ('select vi, semi, stdi, sequence, beta1, cell from midpoints_wt'
+    q = ('select vi, semi, stdi from midpoints_wt'
          ' where ni > 0 order by vi')
     i = [row for row in c.execute(q)]
-    q = ('select va, sema, stda, sequence, beta1, cell from midpoints_wt'
+    q = ('select va, sema, stda from midpoints_wt'
          ' where na > 0 order by va')
     a = [row for row in c.execute(q)]
 
@@ -38,8 +38,9 @@ ax.spines['bottom'].set_visible(True)
 ax.xaxis.set_major_locator(matplotlib.ticker.MultipleLocator(20))
 ax.xaxis.set_minor_locator(matplotlib.ticker.MultipleLocator(5))
 ax.get_yaxis().set_visible(False)
+ax.grid(ls='--', color='#cccccc', zorder=0)
 
-sstd = dict(color='#999999')
+sstd = dict(color='#888888')
 ssem = dict(color='k', lw=3)
 ca = 'tab:blue'
 ci = 'tab:orange'
@@ -48,46 +49,33 @@ ms = 3
 
 offset = max(0, (len(a) - len(i)) / 2)
 for k, d in enumerate(i):
-    mu, sem, std, seq, bet, cell = d
-    st = dict(color=ci, markersize=ms, zorder=3)
-    if seq == 'astar' and bet == 'yes' and cell == 'HEK':
-        st = dict(markeredgecolor='k', markerfacecolor='w', markersize=ms + 2,
-                  zorder=4)
+    mu, sem, std = d
 
     k += offset
-    ax.plot((mu - 2 * std, mu + 2 * std), (k, k), **sstd, zorder=1)
-    ax.plot((mu - sem, mu + sem), (k, k), **ssem, zorder=2)
-    ax.plot(mu, k, m, **st)
+    ax.plot((mu - 2 * std, mu + 2 * std), (k, k), **sstd, zorder=2)
+    ax.plot((mu - sem, mu + sem), (k, k), **ssem, zorder=3)
+    ax.plot(mu, k, m, color=ci, markersize=ms, zorder=4)
 
 offset = max(0, (len(i) - len(a)) / 2)
 for k, d in enumerate(a):
-    mu, sem, std, seq, bet, cel = d
-    st = dict(color=ca, markersize=ms, zorder=3)
-    if seq == 'astar' and bet == 'yes' and cell == 'HEK':
-        st = dict(markeredgecolor='k', markerfacecolor='w', markersize=ms + 2,
-                  zorder=4)
+    mu, sem, std = d
 
-    k += offset
-    ax.plot((mu - 2 * std, mu + 2 * std), (k, k), **sstd, zorder=1)
-    ax.plot((mu - sem, mu + sem), (k, k), **ssem, zorder=2)
-    ax.plot(mu, k, m, **st)
+    ax.plot((mu - 2 * std, mu + 2 * std), (k, k), **sstd, zorder=2)
+    ax.plot((mu - sem, mu + sem), (k, k), **ssem, zorder=3)
+    ax.plot(mu, k, m, color=ca, markersize=ms, zorder=4)
 
 ms2 = 12
 elements = [
-    matplotlib.lines.Line2D([0], [0], marker=m, color='w', label='$V_a$',
-                            markersize=ms2, markerfacecolor=ca),
     matplotlib.lines.Line2D([0], [0], marker=m, color='w', label='$V_i$',
                             markersize=ms2, markerfacecolor=ci),
-    matplotlib.lines.Line2D([0], [0], marker=m, color='w', markersize=ms2,
-                            markerfacecolor='w', markeredgecolor='k',
-                            label=r'a*, ${\beta}1$, HEK',),
+    matplotlib.lines.Line2D([0], [0], marker=m, color='w', label='$V_a$',
+                            markersize=ms2, markerfacecolor=ca),
     matplotlib.lines.Line2D([0], [0], color=ssem['color'], label='SEM',
                             lw=ssem['lw']),
     matplotlib.lines.Line2D([0], [0], color=sstd['color'], label='STD'),
 ]
-ax.legend(loc=(-0.04, 0.80), frameon=False, handles=elements)
+ax.legend(loc='upper left', frameon=False, handles=elements)
 
-
-fname = 'f3-reports.pdf'
+fname = 'f1-all.pdf'
 print(f'Saving to {fname}')
 fig.savefig(fname)
