@@ -2,9 +2,8 @@
 #
 # Calculates max between exp var in Kapplinger and Tan
 #
-import numpy as np
-
 import base
+
 
 with base.connect() as con:
     c = con.cursor()
