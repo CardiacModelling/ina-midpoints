@@ -18,7 +18,7 @@ The data is all derived from an sqlite database (see `base/mutations.sqlite`) th
 ## Requirements
 
 The database can be opened with any [SQLite](https://en.wikipedia.org/wiki/SQLite) compatible software.
-The included scripts require Python 3.6 or newer, with the libraries listed in `requirements.txt`.
+The included scripts require Python 3.6 or newer, with the libraries listed in `requirements.txt` (numpy and matplotlib).
 
 ## Figures
 
