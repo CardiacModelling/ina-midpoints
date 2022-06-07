@@ -25,7 +25,7 @@ with base.connect() as con:
 # Create figure
 #
 print('Creating figure')
-fig = plt.figure(figsize=(6, 6))    # Two-third column size
+fig = plt.figure(figsize=(9, 6))    # Two column size
 fig.subplots_adjust(0.04, 0.075, 0.99, 0.99)
 
 ax = fig.add_subplot(1, 1, 1)
