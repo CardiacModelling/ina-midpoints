@@ -46,7 +46,10 @@ b1, a1 = np.polyfit(va, vi, 1)
 print('Fit to all data')
 print(f'  a, b: {a1}, {b1}')
 print(f'  Pearson correlation coefficient: {p1}')
-
+mu_a, mu_i = np.mean(va), np.mean(vi)
+print('Mean:')
+print(f'  {mu_a}')
+print(f'  {mu_i}')
 va, vi = d_big[1], d_big[2]
 p2 = np.corrcoef(va, vi)[1, 0]
 b2, a2 = np.polyfit(va, vi, 1)
@@ -63,6 +66,9 @@ fig.subplots_adjust(0.08, 0.10, 0.97, 0.98, hspace=0.4, wspace=0.3)
 
 grid = fig.add_gridspec(2, 2)
 
+c1 = 'tab:orange'
+c2 = 'tab:red'
+
 ax = fig.add_subplot(grid[:, 0])
 ax.set_xlabel('$V_a$ (mV)')
 ax.set_ylabel('$V_i$ (mV)')
@@ -75,8 +81,8 @@ ax.set_ylim(-120, -50)
 for va, vi, stda, stdi in zip(*d_all[1:5]):
     e = matplotlib.patches.Ellipse(
         (va, vi), width=4 * stda, height=4 * stdi,
-        facecolor='blue', edgecolor='k', alpha=0.05)
-    ax.add_artist(e)
+        facecolor='tab:blue', edgecolor='k', alpha=0.05)
+    ax.add_artist(e)    #.set_rasterized(True)
 
 # Projections / orthogonal
 a, b = a1, b1
@@ -98,7 +104,7 @@ for va, vi in zip(d_all[1], d_all[2]):
     d1 *= (1 if vi > y else -1)
     d2 *= (1 if x > mx else -1)
 
-    ax.plot((va, x), (vi, y), color='#999999', lw=1)
+    #ax.plot((va, x), (vi, y), color='#999999', lw=1)
     #ax.plot((mx, x), (my, y), color='k', zorder=20)
 
     d1s.append(d1)
@@ -114,38 +120,65 @@ m = 'o'
 ax.plot(d_not[1], d_not[2], m, color='k', markerfacecolor='w')
 ax.plot(d_big[1], d_big[2], m, color='k')
 
+
+# Example decomposition
+if False:
+    # Find the index of an example point
+    for i, va in enumerate(d_all[1]):
+        if va > -58 and va < -52:
+            vi = d_all[2][i]
+            if vi < -81 and vi > -85:
+                print(i, va, vi)
+
+i = 82
+va, vi = d_all[1][i], d_all[2][i]
+f = (va + (vi - a) * b) / (1 + b * b)
+x, y = f, a + f * b
+arrow = dict(length_includes_head=True, edgecolor='k',
+             width=0.5, head_width=2.0, head_length=2.0, lw=0.5, zorder=3)
+ar1 = ax.arrow(mu_a, mu_i, (x - mu_a), (y - mu_i), facecolor=c1, **arrow)
+ar2 = ax.arrow(x, y, (va - x), (vi - y), facecolor=c2, **arrow)
+print(f'Example point: {va}, {vi}')
+
+# Mean
+mean = ax.plot(mu_a, mu_i, '*', color='yellow', lw=5, markersize=15,
+               markeredgecolor='k', markeredgewidth=1, label='mean', zorder=4)
 # Custom legend
+def l2d(**kwargs):
+    return matplotlib.lines.Line2D([0], [0], **kwargs)
+
 ms2 = 12
 elements = [
-    matplotlib.lines.Line2D([0], [0], marker=m, color='k', ls='none',
-                            label=r'a*, ${\beta}1$, HEK'),
-    matplotlib.lines.Line2D([0], [0], marker=m, color='k', ls='none',
-                            markerfacecolor='w', label='Other'),
-    matplotlib.lines.Line2D([0], [0], marker=m, color='b', ls='none',
-                            label=r'$2\sigma$ range'),
+    l2d(marker=m, color='k', ls='none', label=r'a*, ${\beta}1$, HEK'),
+    l2d(marker=m, color='k', ls='none', markerfacecolor='w', label='Other'),
+    l2d(marker=m, color='tab:blue', ls='none', label=r'$2\sigma$ range'),
+    l2d(marker='*', ls='none', color='yellow', markersize=11,
+        markeredgecolor='k', label='mean'),
     l1[0],
 ]
-ax.legend(loc='lower right', handles=elements, framealpha=1)
+ax.legend(loc='lower right', handles=elements, framealpha=1, fontsize=8)
 
 # Principal components vs study size
 na, ni = np.array(d_all[5]), np.array(d_all[6])
 xlim = -35, 35
 vline = dict(color='#999999', ls='--')
 ax01 = fig.add_subplot(grid[0, 1])
-ax01.set_xlabel('Second principal component')
+ax01.set_xlabel('Second principal component (mV)')
 ax01.set_ylabel(r'Exp. size ($\sqrt{n_a + n_i}$)')
 ax01.set_xlim(*xlim)
 ax01.axvline(0, **vline)
-ax01.plot(d1s, np.sqrt(na + ni), 'o', markerfacecolor='none')
+ax01.plot(d1s, np.sqrt(na + ni), 'o', markerfacecolor='none',
+          markeredgecolor=c2)
 
 # Distance to line
 ax11 = fig.add_subplot(grid[1, 1])
-ax11.set_xlabel('First principal component')
+ax11.set_xlabel('First principal component (mV)')
 ax11.set_ylabel(r'Exp. size ($\sqrt{n_a + n_i}$)')
 ax11.set_xlim(*xlim)
 ax11.axvline(0, **vline)
 na, ni = np.array(na), np.array(ni)
-ax11.plot(d2s, np.sqrt(na + ni), 'o', markerfacecolor='none')
+ax11.plot(d2s, np.sqrt(na + ni), 'o', markerfacecolor='none',
+          markeredgecolor=c1)
 
 
 base.axletter(ax, 'A', offset=-0.07, tweak=0.01)
