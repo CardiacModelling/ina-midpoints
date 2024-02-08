@@ -32,9 +32,9 @@ with base.connect() as con:
 # Create figure
 #
 print('Creating figure')
-fig = plt.figure(figsize=(9, 8.5))    # Two column size
-fig.subplots_adjust(0.058, 0.05, 0.99, 0.99, hspace=0.3)
-grid = fig.add_gridspec(2, 2, height_ratios=[4, 1])
+fig = plt.figure(figsize=(9, 8))    # Two column size
+fig.subplots_adjust(0.056, 0.054, 0.99, 0.99, hspace=0.3, wspace=0.4)
+grid = fig.add_gridspec(2, 3, height_ratios=[5, 1])
 
 #
 # Top: all data
@@ -95,44 +95,65 @@ vi, _, stdi = np.array([row for row in i]).T
 va, _, stda = np.array([row for row in a]).T
 
 bins = np.arange(-110, -10, 2.5)
-kwargs = dict(bins=bins, facecolor='none')
+kw1 = dict(bins=bins, facecolor='none')
+lw = dict(frameon=False, handlelength=0.4, handletextpad=0.4,
+          borderaxespad=0.1)
+xlim1 = -112, -18
+wvi = np.ones(len(vi)) / len(vi) * 100
+wva = np.ones(len(va)) / len(va) * 100
+
 ax21 = fig.add_subplot(grid[1, 0])
 ax21.set_xlabel('Membrane potential (mV)')
 ax21.set_ylabel('Percentage')
-ax21.set_xlim(-112, -18)
-
-w = np.ones(len(vi)) / len(vi) * 100
-ax21.hist(vi, weights=w, edgecolor='tab:orange', label='$\mu_i$', **kwargs)
-w = np.ones(len(va)) / len(va) * 100
-ax21.hist(va, weights=w, edgecolor='tab:blue', label='$\mu_a$', **kwargs)
-ax21.legend(loc='upper left', frameon=False)
+ax21.set_xlim(*xlim1)
+ax21.hist(vi, weights=wvi, edgecolor='tab:orange', label='$\mu_i$', **kw1)
+ax21.hist(va, weights=wva, edgecolor='tab:blue', label='$\mu_a$', **kw1)
+ax21.legend(loc='upper left', **lw)
 
 bins = np.arange(0, 24, 1)
-kwargs = dict(bins=bins, facecolor='none')
-xlim = -1, 24
-ylim = 0, 22
+kw2 = dict(bins=bins, facecolor='none')
+xlim2 = -1, 24
+ylim2 = 0, 22
 
 ax22 = fig.add_subplot(grid[1, 1])
 ax22.set_xlabel('$\sigma$ (mV)')
 ax22.set_ylabel('Percentage')
-ax22.set_xlim(*xlim)
-ax22.set_ylim(*ylim)
+ax22.set_xlim(*xlim2)
+ax22.set_ylim(*ylim2)
 top90 = lambda sigma: sigma * s90 * 2
 frp90 = lambda p90: p90 / (s90 * 2)
 ax22t = ax22.secondary_xaxis('top', functions=(top90, frp90))
 ax22t.set_xlabel('90th percentile (mV)')
 
-w = np.ones(len(stdi)) / len(stdi) * 100
-ax22.hist(stdi, weights=w, edgecolor='tab:orange', label='$\sigma_i$',
-          **kwargs)
-w = np.ones(len(stda)) / len(stda) * 100
-ax22.hist(stda, weights=w, edgecolor='tab:blue', label='$\sigma_a$', **kwargs)
-ax22.legend(loc='upper right', frameon=False)
+wsi = np.ones(len(stdi)) / len(stdi) * 100
+wsa = np.ones(len(stda)) / len(stda) * 100
+ax22.hist(stdi, weights=wsi, edgecolor='tab:orange', label='$\sigma_i$', **kw2)
+ax22.hist(stda, weights=wsa, edgecolor='tab:blue', label='$\sigma_a$', **kw2)
+ax22.legend(loc='upper right', **lw)
+
+#
+# Cumulative
+#
+kw2['cumulative'] = True
+ax23 = fig.add_subplot(grid[1, 2])
+ax23.set_xlabel('$\sigma$ (mV)')
+ax23.set_ylabel('Cumulative %')
+ax23.set_yticks((0, 25, 50, 75, 100))
+ax23.set_xlim(*xlim2)
+ax23t = ax23.secondary_xaxis('top', functions=(top90, frp90))
+ax23t.set_xlabel('90th percentile (mV)')
+ax23.hist(stdi, weights=wsi, edgecolor='tab:orange', label='$\sigma_i$', **kw2)
+ax23.hist(stda, weights=wsa, edgecolor='tab:blue', label='$\sigma_a$', **kw2)
+ax23.legend(loc='upper left', **lw)
+for p in (25, 50, 75):
+    ax23.axhline(p, ls='--', lw=1, color='#bbb', zorder=-1)
+
 
 #
 # Save
-x = -0.045
 #
+
+x = -0.045
 y = 0.025
 base.axletter(ax1, 'A', offset=x)
 base.axletter(ax21, 'B', offset=x, tweak=y)

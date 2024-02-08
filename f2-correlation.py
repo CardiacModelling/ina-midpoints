@@ -8,6 +8,11 @@ import numpy as np
 
 import base
 
+# Sigma multiplier to get 90-th percentile
+# Find as -scipy.stats.norm.ppf(0.05)
+s90 = 1.6448536269514729
+
+show_big=False
 
 # Gather data
 print('Gathering data')
@@ -32,11 +37,15 @@ with base.connect() as con:
     q = ('select pub, va, stda, vi, stdi, na, ni from midpoints_wt'
          ' where (stda != 0 AND stdi != 0)')
     d_all = get(q)
+    n_all = len(d_all[0])
     w = 'sequence == "astar" and beta1 == "yes" and cell == "HEK"'
     d_big = get(q + ' and (' + w + ')')
+    n_big = len(d_big[0])
     w = ('sequence != "astar" or beta1 != "yes" or cell != "HEK"'
          ' or sequence is null or beta1 is null or cell is null')
     d_not = get(q + ' and (' + w + ')')
+    n_not = len(d_not[0])
+    print(f'Counts: All {n_all}, Biggest {n_big}, Remainder {n_not}')
 
 
 # Fit line
@@ -70,19 +79,20 @@ c1 = 'tab:orange'
 c2 = 'tab:red'
 
 ax = fig.add_subplot(grid[:, 0])
-ax.set_xlabel('$V_a$ (mV)')
-ax.set_ylabel('$V_i$ (mV)')
+ax.set_xlabel('$\mu_a$ (mV)')
+ax.set_ylabel('$\mu_i$ (mV)')
 ax.grid(True, ls=':')
-xlim = np.array([-70, -10])
+xlim = -65, -15
+ylim = -115, -55
 ax.set_xlim(*xlim)
-ax.set_ylim(-120, -50)
+ax.set_ylim(*ylim)
 
 # Ellipses
 for va, vi, stda, stdi in zip(*d_all[1:5]):
     e = matplotlib.patches.Ellipse(
-        (va, vi), width=4 * stda, height=4 * stdi,
+        (va, vi), width=2 * s90 * stda, height=2 * s90 * stdi,
         facecolor='tab:blue', edgecolor='k', alpha=0.05)
-    ax.add_artist(e)    #.set_rasterized(True)
+    ax.add_artist(e).set_rasterized(True)
 
 # Projections / orthogonal
 a, b = a1, b1
@@ -112,13 +122,17 @@ for va, vi in zip(d_all[1], d_all[2]):
 d1s, d2s = np.array(d1s), np.array(d2s)
 
 # Linear fit
+xlim = np.array(xlim)
 l1 = ax.plot(xlim, a1 + b1 * xlim, '-', color='tab:pink',
              label=f'{a1:.2f} mV + {b1:.2f} $V_a$')
 
 # Midpoints
 m = 'o'
-ax.plot(d_not[1], d_not[2], m, color='k', markerfacecolor='w')
-ax.plot(d_big[1], d_big[2], m, color='k')
+if show_big:
+    ax.plot(d_not[1], d_not[2], m, color='k', markerfacecolor='w')
+    ax.plot(d_big[1], d_big[2], m, color='k')
+else:
+    ax.plot(d_all[1], d_all[2], m, color='k', markerfacecolor='w')
 
 
 # Example decomposition
@@ -149,14 +163,22 @@ def l2d(**kwargs):
 
 ms2 = 12
 elements = [
-    l2d(marker=m, color='k', ls='none', label=r'a*, ${\beta}1$, HEK'),
-    l2d(marker=m, color='k', ls='none', markerfacecolor='w', label='Other'),
-    l2d(marker=m, color='tab:blue', ls='none', label=r'$2\sigma$ range'),
+    l2d(marker=m, color='k', ls='none', markerfacecolor='w',
+        label=f'Experiments'),
+    l2d(marker=m, color='tab:blue', ls='none', label=r'90th percentile'),
     l2d(marker='*', ls='none', color='yellow', markersize=11,
-        markeredgecolor='k', label='mean'),
+        markeredgecolor='k', label='Mean-of-means'),
     l1[0],
 ]
-ax.legend(loc='lower right', handles=elements, framealpha=1, fontsize=8)
+if show_big:
+    elements = [
+        l2d(marker=m, color='k', ls='none',
+            label=f'a*, $\\beta 1$, HEK (n={n_big})'),
+        l2d(marker=m, color='k', ls='none', markerfacecolor='w',
+            label=f'Other (n={n_not})'),
+        ] + elements[1:]
+
+ax.legend(loc='lower right', handles=elements, framealpha=1 , fontsize=9)
 
 # Principal components vs study size
 na, ni = np.array(d_all[5]), np.array(d_all[6])
@@ -181,9 +203,9 @@ ax01.plot(d1s, np.sqrt(na + ni), 'o', markerfacecolor='none',
           markeredgecolor=c2)
 
 base.axletter(ax, 'A', offset=-0.07, tweak=0.01)
-base.axletter(ax01, 'B', offset=-0.085, tweak=0.01)
-base.axletter(ax11, 'C', offset=-0.085)
+base.axletter(ax11, 'B', offset=-0.085)
+base.axletter(ax01, 'C', offset=-0.085, tweak=0.01)
 
 fname = 'f2-correlation.pdf'
 print(f'Saving to {fname}')
-fig.savefig(fname)
+fig.savefig(fname, dpi=300)

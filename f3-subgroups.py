@@ -2,6 +2,9 @@
 #
 # Figure 3: Highlighted subgroups
 #
+import sys
+
+import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 
@@ -13,142 +16,93 @@ print('Gathering data')
 with base.connect() as con:
     c = con.cursor()
 
-    q = ('select vi, semi, stdi, sequence, beta1, cell from midpoints_wt'
-         ' where ni > 0 order by vi')
-    i = [row for row in c.execute(q)]
-    q = ('select va, sema, stda, sequence, beta1, cell from midpoints_wt'
-         ' where na > 0 order by va')
-    a = [row for row in c.execute(q)]
+    q = ('select va, vi, sequence, beta1, cell from midpoints_wt'
+         ' where (ni > 0 and na > 0)')
+    p = [row for row in c.execute(q)]
 
 
 #
 # Create figure
 #
 print('Creating figure')
-fig = plt.figure(figsize=(9, 4))    # Two column size
-fig.subplots_adjust(0.04, 0.045, 0.99, 0.99, hspace=0.2)
+fig = plt.figure(figsize=(9, 3.4))    # Two column size
+fig.subplots_adjust(0.08, 0.13, 0.98, 0.87, wspace=0.1)
+grid = fig.add_gridspec(1, 3)
 
-grid = fig.add_gridspec(3, 1)
+c1 = None # 'tab:green'
+c2 = None # 'tab:purple'
+c3 = None # 'tab:brown'
+c4 = None # 'tab:brown'
+c5 = '#aaa'
+m1 = 'o'
+m2 = 's'
+m3 = '^'
+m4 = '*'
+m5 = 'v'
 
-c1 = 'tab:orange'
-c2 = 'tab:red'
+xlim = -62, -19
+ylim = -109, -59
 
-ax = fig.add_subplot(grid[:, 0])
-ax.set_xlabel('$V_a$ (mV)')
-ax.set_ylabel('$V_i$ (mV)')
-ax.grid(True, ls=':')
-xlim = np.array([-70, -10])
-ax.set_xlim(*xlim)
-ax.set_ylim(-120, -50)
+ax11 = fig.add_subplot(grid[0, 0])
+ax11.set_xlabel('$V_a$ (mV)')
+ax11.set_ylabel('$V_i$ (mV)')
+ax11.grid(True, ls=':')
+ax11.set_xlim(*xlim)
+ax11.set_ylim(*ylim)
 
+ax12 = fig.add_subplot(grid[0, 1])
+ax12.set_xlabel('$V_a$ (mV)')
+ax12.set_yticklabels([])
+ax12.grid(True, ls=':')
+ax12.set_xlim(*xlim)
+ax12.set_ylim(*ylim)
 
+ax13 = fig.add_subplot(grid[0, 2])
+ax13.set_xlabel('$V_a$ (mV)')
+ax13.set_yticklabels([])
+ax13.grid(True, ls=':')
+ax13.set_xlim(*xlim)
+ax13.set_ylim(*ylim)
 
+# Subunit
+kwargs = dict(ls='none', lw=5, markersize=5, markerfacecolor='none', alpha=0.7,
+              rasterized=True)
+del(kwargs['markerfacecolor'])
+leg = dict(loc=(0, 0.995), frameon=False, handlelength=0.2)
+sub = ['a', 'astar', 'b', 'bstar']
+v = np.array([r[:2] for r in p if r[2] == 'astar'])
+ax11.plot(v[:, 0], v[:, 1], m1, label=f'a* ({len(v)})', **kwargs)
+v = np.array([r[:2] for r in p if r[2] == 'b'])
+ax11.plot(v[:, 0], v[:, 1], m2, label=f'b ({len(v)})', **kwargs)
+v = np.array([r[:2] for r in p if r[2] not in sub])
+ax11.plot(v[:, 0], v[:, 1], m5, color='#ccc', label=f'? ({len(v)})', **kwargs)
+v = np.array([r[:2] for r in p if r[2] == 'a'])
+ax11.plot(v[:, 0], v[:, 1], m3, label=f'a ({len(v)})', **kwargs)
+v = np.array([r[:2] for r in p if r[2] == 'bstar'])
+ax11.plot(v[:, 0], v[:, 1], m4, label=f'b* ({len(v)})', **kwargs)
+ax11.legend(ncol=3, **leg)
 
+# Beta 1
+v = np.array([r[:2] for r in p if r[3] == 'no'])
+ax12.plot(v[:, 0], v[:, 1], m1, label=f'Without $\\beta1$ ({len(v)})',
+          **kwargs)
+v = np.array([r[:2] for r in p if r[3] == 'yes'])
+ax12.plot(v[:, 0], v[:, 1], m2, label=f'With $\\beta1$ ({len(v)})', **kwargs)
+ax12.legend(ncol=2, **leg)
 
+# Cell type
+v = np.array([r[:2] for r in p if r[4] == 'HEK'])
+ax13.plot(v[:, 0], v[:, 1], m1, label=f'HEK ({len(v)})', **kwargs)
+v = np.array([r[:2] for r in p if r[4] == 'CHO'])
+ax13.plot(v[:, 0], v[:, 1], m2, label=f'CHO ({len(v)})', **kwargs)
+v = np.array([r[:2] for r in p if r[4] == 'Oocyte'])
+ax13.plot(v[:, 0], v[:, 1], m3, label=f'Oocyte ({len(v)})', **kwargs)
+ax13.legend(ncol=2, **leg)
 
-def format_axes(ax):
-    ax.set_xlabel('Membrane potential (mV)')
-    ax.set_xlim(-120, 0)
-    ax.set_ylim(-2, 187)
-    for s in ax.spines.values():
-        s.set_visible(False)
-    ax.spines['bottom'].set_visible(True)
-    ax.xaxis.set_major_locator(matplotlib.ticker.MultipleLocator(40))
-    ax.xaxis.set_minor_locator(matplotlib.ticker.MultipleLocator(5))
-    ax.get_yaxis().set_visible(False)
+#base.axletter(ax11, 'A', offset=-0.07, tweak=0.01)
+#base.axletter(ax12, 'B', offset=0.0)
+#base.axletter(ax13, 'C', offset=0.0, tweak=0.01)
 
-
-def el(label=None, marker=None, markersize=None, color=None,
-       markerfacecolor=None, markeredgecolor=None, lw=None):
-    lw = {} if lw is None else {'lw': lw}
-    return matplotlib.lines.Line2D(
-        [0],
-        [0],
-        label=label,
-        marker=marker,
-        markersize=markersize,
-        color=color,
-        markerfacecolor=markerfacecolor,
-        markeredgecolor=markeredgecolor,
-        **lw
-    )
-
-
-def plot(ax, label, f, marker='o', letter=None):
-
-    sstd = dict(color='#bbbbbb')
-    #ssem = dict(color='k', lw=3)
-    m1 = dict(zorder=3, markersize=3, marker='o', color='tab:orange')
-    m2 = dict(zorder=4, markersize=5, marker=marker,
-              markeredgecolor='k', markerfacecolor='w')
-
-    m1['color'] = 'tab:orange'
-    offset = max(0, (len(a) - len(i)) / 2)
-    for k, d in enumerate(i):
-        k += offset
-        mu, sem, std, seq, bet, cell = d
-        m = m2 if f(seq, bet, cell) else m1
-        ax.plot((mu - 2 * std, mu + 2 * std), (k, k), **sstd, zorder=1)
-        #ax.plot((mu - sem, mu + sem), (k, k), **ssem, zorder=2)
-        ax.plot(mu, k, **m)
-
-    m1['color'] = 'tab:blue'
-    offset = max(0, (len(i) - len(a)) / 2)
-    for k, d in enumerate(a):
-        k += offset
-        mu, sem, std, seq, bet, cell = d
-        m = m2 if f(seq, bet, cell) else m1
-        ax.plot((mu - 2 * std, mu + 2 * std), (k, k), **sstd, zorder=1)
-        #ax.plot((mu - sem, mu + sem), (k, k), **ssem, zorder=2)
-        ax.plot(mu, k, **m)
-
-    ms2 = 12
-    els = [
-        el(label, marker, ms2, markeredgecolor='k', markerfacecolor='w', lw=0),
-    ]
-    ax.legend(loc=(-0.15, 0.87), frameon=False, handlelength=1, handles=els)
-    if letter:
-        base.axletter(ax, letter, offset=-0.0175)
-
-
-#
-# Alpha subunit
-#
-ax = fig.add_subplot(2, 4, 1)
-format_axes(ax)
-plot(ax, 'a', lambda seq, bet, cell: seq == 'a', letter='A')
-
-ax = fig.add_subplot(2, 4, 2)
-format_axes(ax)
-plot(ax, 'a*', lambda seq, bet, cell: seq == 'astar')
-
-ax = fig.add_subplot(2, 4, 3)
-format_axes(ax)
-plot(ax, 'b', lambda seq, bet, cell: seq == 'b')
-
-ax = fig.add_subplot(2, 4, 4)
-format_axes(ax)
-plot(ax, 'b*', lambda seq, bet, cell: seq == 'bstar')
-
-ax = fig.add_subplot(2, 4, 5)
-format_axes(ax)
-plot(ax, r'With $\beta1$', lambda seq, bet, cell: bet == 'yes', letter='B',
-     marker='s')
-
-ax = fig.add_subplot(2, 4, 6)
-format_axes(ax)
-plot(ax, 'CHO', lambda seq, bet, cell: cell == 'CHO', marker='^', letter='C')
-
-ax = fig.add_subplot(2, 4, 7)
-format_axes(ax)
-plot(ax, 'Oocyte', lambda seq, bet, cell: cell == 'Oocyte', marker='^')
-
-ax = fig.add_subplot(2, 4, 8)
-format_axes(ax)
-plot(ax, 'a*, $\\beta1$,HEK',
-     lambda seq, bet, cell: seq == 'astar' and bet == 'yes' and cell == 'HEK',
-     letter='D')
-
-fname = 'f3-subgroups.pdf'
+fname = 'f3-subgroups' + ('.png' if 'png' in sys.argv else '.pdf')
 print(f'Saving to {fname}')
 fig.savefig(fname)
