@@ -12,7 +12,8 @@ import base
 # Find as -scipy.stats.norm.ppf(0.05)
 s90 = 1.6448536269514729
 
-show_big=False
+show_big = False
+show_example_right = False
 
 # Gather data
 print('Gathering data')
@@ -59,6 +60,8 @@ mu_a, mu_i = np.mean(va), np.mean(vi)
 print('Mean:')
 print(f'  {mu_a}')
 print(f'  {mu_i}')
+
+print()
 va, vi = d_big[1], d_big[2]
 p2 = np.corrcoef(va, vi)[1, 0]
 b2, a2 = np.polyfit(va, vi, 1)
@@ -97,36 +100,22 @@ for va, vi, stda, stdi in zip(*d_all[1:5]):
 # Projections / orthogonal
 a, b = a1, b1
 
-# Mean x and y, projected onto line (should pretty much equal the mean)
+# Mean x and y, projected onto line (should stay the same!)
 va, vi = np.mean(d_all[1]), np.mean(d_all[2])
 f = (va + (vi - a) * b) / (1 + b * b)
 mx, my = f, a + f * b
 
 # Project all points onto fit, then get tangential and orthogonal length
-d1s, d2s = [], []
-for va, vi in zip(d_all[1], d_all[2]):
-    f = (va + (vi - a) * b) / (1 + b * b)
-    x, y = f, a + f * b
+va, vi = d_all[1], d_all[2]
+d1s = ((va - mx) + b * (vi - my)) / np.sqrt(1 + b**2)
+d2s = ((vi - my) - b * (va - mx)) / np.sqrt(1 + b**2)
 
-    d1 = np.sqrt((va - x)**2 + (vi - y)**2)
-    d2 = np.sqrt((mx - x)**2 + (my - y)**2)
-
-    d1 *= (1 if vi > y else -1)
-    d2 *= (1 if x > mx else -1)
-
-    #ax.plot((va, x), (vi, y), color='#999999', lw=1)
-    #ax.plot((mx, x), (my, y), color='k', zorder=20)
-
-    d1s.append(d1)
-    d2s.append(d2)
-d1s, d2s = np.array(d1s), np.array(d2s)
-
-# Linear fit
+# Plot linear fit
 xlim = np.array(xlim)
 l1 = ax.plot(xlim, a1 + b1 * xlim, '-', color='tab:pink',
              label=f'{a1:.2f} mV + {b1:.2f} $V_a$')
 
-# Midpoints
+# Plot midpoints
 m = 'o'
 if show_big:
     ax.plot(d_not[1], d_not[2], m, color='k', markerfacecolor='w')
@@ -134,16 +123,7 @@ if show_big:
 else:
     ax.plot(d_all[1], d_all[2], m, color='k', markerfacecolor='w')
 
-
 # Example decomposition
-if False:
-    # Find the index of an example point
-    for i, va in enumerate(d_all[1]):
-        if va > -58 and va < -52:
-            vi = d_all[2][i]
-            if vi < -81 and vi > -85:
-                print(i, va, vi)
-
 i = 82
 va, vi = d_all[1][i], d_all[2][i]
 f = (va + (vi - a) * b) / (1 + b * b)
@@ -153,6 +133,7 @@ arrow = dict(length_includes_head=True, edgecolor='k',
 ar1 = ax.arrow(mu_a, mu_i, (x - mu_a), (y - mu_i), facecolor=c1, **arrow)
 ar2 = ax.arrow(x, y, (va - x), (vi - y), facecolor=c2, **arrow)
 print(f'Example point: {va}, {vi}')
+print(f'             : {d1s[i]}, {d2s[i]}')
 
 # Mean
 mean = ax.plot(mu_a, mu_i, '*', color='yellow', lw=5, markersize=15,
@@ -184,27 +165,35 @@ ax.legend(loc='lower right', handles=elements, framealpha=1 , fontsize=9)
 na, ni = np.array(d_all[5]), np.array(d_all[6])
 xlim = -35, 35
 vline = dict(color='#999999', ls='--')
-ax11 = fig.add_subplot(grid[0, 1])
-ax11.set_xlabel('First principal component (mV)')
-ax11.set_ylabel(r'Exp. size ($\sqrt{n_a + n_i}$)')
-ax11.set_xlim(*xlim)
-ax11.axvline(0, **vline)
-na, ni = np.array(na), np.array(ni)
-ax11.plot(d2s, np.sqrt(na + ni), 'o', markerfacecolor='none',
-          markeredgecolor=c1)
-
-# Second component
-ax01 = fig.add_subplot(grid[1, 1])
-ax01.set_xlabel('Second principal component (mV)')
+ax01 = fig.add_subplot(grid[0, 1])
+ax01.set_xlabel('First principal component (mV)')
 ax01.set_ylabel(r'Exp. size ($\sqrt{n_a + n_i}$)')
 ax01.set_xlim(*xlim)
 ax01.axvline(0, **vline)
+na, ni = np.array(na), np.array(ni)
 ax01.plot(d1s, np.sqrt(na + ni), 'o', markerfacecolor='none',
+          markeredgecolor=c1)
+if show_example_right:
+    print(d1s[i])
+    ax01.plot(d1s[i], np.sqrt(na + ni)[i], 'o', markerfacecolor='none',
+              markeredgecolor='k')
+
+# Second component
+ax11 = fig.add_subplot(grid[1, 1])
+ax11.set_xlabel('Second principal component (mV)')
+ax11.set_ylabel(r'Exp. size ($\sqrt{n_a + n_i}$)')
+ax11.set_xlim(*xlim)
+ax11.axvline(0, **vline)
+ax11.plot(d2s, np.sqrt(na + ni), 'o', markerfacecolor='none',
           markeredgecolor=c2)
+if show_example_right:
+    print(d2s[i])
+    ax11.plot(d2s[i], np.sqrt(na + ni)[i], 'o', markerfacecolor='none',
+              markeredgecolor='k')
 
 base.axletter(ax, 'A', offset=-0.07, tweak=0.01)
-base.axletter(ax11, 'B', offset=-0.085)
-base.axletter(ax01, 'C', offset=-0.085, tweak=0.01)
+base.axletter(ax01, 'B', offset=-0.085)
+base.axletter(ax11, 'C', offset=-0.085, tweak=0.01)
 
 fname = 'f2-correlation.pdf'
 print(f'Saving to {fname}')

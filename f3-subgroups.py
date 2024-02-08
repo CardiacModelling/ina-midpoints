@@ -44,21 +44,21 @@ xlim = -62, -19
 ylim = -109, -59
 
 ax11 = fig.add_subplot(grid[0, 0])
-ax11.set_xlabel('$V_a$ (mV)')
-ax11.set_ylabel('$V_i$ (mV)')
+ax11.set_xlabel('$\mu_a$ (mV)')
+ax11.set_ylabel('$\mu_i$ (mV)')
 ax11.grid(True, ls=':')
 ax11.set_xlim(*xlim)
 ax11.set_ylim(*ylim)
 
 ax12 = fig.add_subplot(grid[0, 1])
-ax12.set_xlabel('$V_a$ (mV)')
+ax12.set_xlabel('$\mu_a$ (mV)')
 ax12.set_yticklabels([])
 ax12.grid(True, ls=':')
 ax12.set_xlim(*xlim)
 ax12.set_ylim(*ylim)
 
 ax13 = fig.add_subplot(grid[0, 2])
-ax13.set_xlabel('$V_a$ (mV)')
+ax13.set_xlabel('$\mu_a$ (mV)')
 ax13.set_yticklabels([])
 ax13.grid(True, ls=':')
 ax13.set_xlim(*xlim)
