@@ -32,9 +32,12 @@ with base.connect() as con:
 # Create figure
 #
 print('Creating figure')
-fig = plt.figure(figsize=(9, 8.5))    # Two column size
-fig.subplots_adjust(0.058, 0.05, 0.99, 0.99, hspace=0.3)
-grid = fig.add_gridspec(2, 2, height_ratios=[4, 1])
+#fig = plt.figure(figsize=(9, 7.5))    # Two column size
+#fig.subplots_adjust(0.058, 0.06, 0.99, 0.99, hspace=0.3)
+#grid = fig.add_gridspec(2, 2, height_ratios=[4.5, 1])
+fig = plt.figure(figsize=(9, 9))    # Two column size
+fig.subplots_adjust(0.058, 0.05, 0.99, 0.99, hspace=0.25)
+grid = fig.add_gridspec(2, 2, height_ratios=[4.7, 1])
 
 #
 # Top: all data

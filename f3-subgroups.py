@@ -68,7 +68,7 @@ ax13.set_ylim(*ylim)
 kwargs = dict(ls='none', lw=5, markersize=5, markerfacecolor='none', alpha=0.7,
               rasterized=True)
 del(kwargs['markerfacecolor'])
-leg = dict(loc=(0, 0.995), frameon=False, handlelength=0.2)
+leg = dict(frameon=False, handlelength=0.15)
 sub = ['a', 'astar', 'b', 'bstar']
 v = np.array([r[:2] for r in p if r[2] == 'astar'])
 ax11.plot(v[:, 0], v[:, 1], m1, label=f'a* ({len(v)})', **kwargs)
@@ -80,7 +80,7 @@ v = np.array([r[:2] for r in p if r[2] == 'a'])
 ax11.plot(v[:, 0], v[:, 1], m3, label=f'a ({len(v)})', **kwargs)
 v = np.array([r[:2] for r in p if r[2] == 'bstar'])
 ax11.plot(v[:, 0], v[:, 1], m4, label=f'b* ({len(v)})', **kwargs)
-ax11.legend(ncol=3, **leg)
+ax11.legend(ncol=3, loc=(0.05, 0.995), **leg)
 
 # Beta 1
 v = np.array([r[:2] for r in p if r[3] == 'no'])
@@ -88,7 +88,7 @@ ax12.plot(v[:, 0], v[:, 1], m1, label=f'Without $\\beta1$ ({len(v)})',
           **kwargs)
 v = np.array([r[:2] for r in p if r[3] == 'yes'])
 ax12.plot(v[:, 0], v[:, 1], m2, label=f'With $\\beta1$ ({len(v)})', **kwargs)
-ax12.legend(ncol=2, **leg)
+ax12.legend(ncol=1, loc=(0.10, 0.995), **leg)
 
 # Cell type
 v = np.array([r[:2] for r in p if r[4] == 'HEK'])
@@ -97,11 +97,12 @@ v = np.array([r[:2] for r in p if r[4] == 'CHO'])
 ax13.plot(v[:, 0], v[:, 1], m2, label=f'CHO ({len(v)})', **kwargs)
 v = np.array([r[:2] for r in p if r[4] == 'Oocyte'])
 ax13.plot(v[:, 0], v[:, 1], m3, label=f'Oocyte ({len(v)})', **kwargs)
-ax13.legend(ncol=2, **leg)
+ax13.legend(ncol=2, loc=(0.10, 0.995), **leg)
 
-#base.axletter(ax11, 'A', offset=-0.07, tweak=0.01)
-#base.axletter(ax12, 'B', offset=0.0)
-#base.axletter(ax13, 'C', offset=0.0, tweak=0.01)
+y = 0.12
+base.axletter(ax11, 'A', tweak=y, offset=-0.065)
+base.axletter(ax12, 'B', tweak=y, offset=0.004)
+base.axletter(ax13, 'C', tweak=y, offset=0.004)
 
 fname = 'f3-subgroups' + ('.png' if 'png' in sys.argv else '.pdf')
 print(f'Saving to {fname}')
