@@ -73,10 +73,13 @@ print(f'  Pearson correlation coefficient: {p2}')
 # Create figure
 #
 print('Creating figure')
-fig = plt.figure(figsize=(9, 4.6))    # Two column size
-fig.subplots_adjust(0.08, 0.10, 0.97, 0.98, hspace=0.4, wspace=0.3)
-
+fig = plt.figure(figsize=(9, 4.35))    # Two column size
+fig.subplots_adjust(0.08, 0.11, 0.98, 0.98, hspace=0.4, wspace=0.3)
+xlim = -65, -15
+ylim = -112, -58
+# NOTE: These measurements chosen to get almost equal aspect manually
 grid = fig.add_gridspec(2, 2)
+
 
 c1 = 'tab:orange'
 c2 = 'tab:red'
@@ -85,10 +88,8 @@ ax = fig.add_subplot(grid[:, 0])
 ax.set_xlabel('$\mu_a$ (mV)')
 ax.set_ylabel('$\mu_i$ (mV)')
 ax.grid(True, ls=':')
-xlim = -65, -15
-ylim = -115, -55
-ax.set_xlim(*xlim)
-ax.set_ylim(*ylim)
+ax.set(xlim=xlim, ylim=ylim)
+#ax.axis('equal')  This changes the limits
 
 # Ellipses
 for va, vi, stda, stdi in zip(*d_all[1:5]):
@@ -192,8 +193,8 @@ if show_example_right:
               markeredgecolor='k')
 
 base.axletter(ax, 'A', offset=-0.07, tweak=0.01)
-base.axletter(ax01, 'B', offset=-0.085)
-base.axletter(ax11, 'C', offset=-0.085, tweak=0.01)
+base.axletter(ax01, 'B', offset=-0.090)
+base.axletter(ax11, 'C', offset=-0.090, tweak=0.01)
 
 fname = 'f2-correlation.pdf'
 print(f'Saving to {fname}')

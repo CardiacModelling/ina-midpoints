@@ -25,8 +25,11 @@ with base.connect() as con:
 # Create figure
 #
 print('Creating figure')
-fig = plt.figure(figsize=(9, 3.4))    # Two column size
-fig.subplots_adjust(0.08, 0.13, 0.98, 0.87, wspace=0.1)
+fig = plt.figure(figsize=(9, 3.82))    # Two column size
+fig.subplots_adjust(0.08, 0.115, 0.98, 0.88, wspace=0.1)
+xlim = -62, -19
+ylim = -109, -59
+# NOTE: These measurements picked to manually give axes equal aspect
 grid = fig.add_gridspec(1, 3)
 
 c1 = None # 'tab:green'
@@ -39,9 +42,6 @@ m2 = 's'
 m3 = '^'
 m4 = '*'
 m5 = 'v'
-
-xlim = -62, -19
-ylim = -109, -59
 
 ax11 = fig.add_subplot(grid[0, 0])
 ax11.set_xlabel('$\mu_a$ (mV)')
@@ -65,8 +65,8 @@ ax13.set_xlim(*xlim)
 ax13.set_ylim(*ylim)
 
 # Subunit
-kwargs = dict(ls='none', lw=5, markersize=5, markerfacecolor='none', alpha=0.7,
-              rasterized=True)
+kwargs = dict(ls='none', lw=5, markersize=6, markerfacecolor='none',
+              alpha=0.65, rasterized=True)
 del(kwargs['markerfacecolor'])
 leg = dict(frameon=False, handlelength=0.15)
 sub = ['a', 'astar', 'b', 'bstar']
@@ -99,7 +99,7 @@ v = np.array([r[:2] for r in p if r[4] == 'Oocyte'])
 ax13.plot(v[:, 0], v[:, 1], m3, label=f'Oocyte ({len(v)})', **kwargs)
 ax13.legend(ncol=2, loc=(0.10, 0.995), **leg)
 
-y = 0.12
+y = 0.105
 base.axletter(ax11, 'A', tweak=y, offset=-0.065)
 base.axletter(ax12, 'B', tweak=y, offset=0.004)
 base.axletter(ax13, 'C', tweak=y, offset=0.004)
