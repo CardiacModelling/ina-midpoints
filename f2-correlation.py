@@ -196,6 +196,27 @@ base.axletter(ax, 'A', offset=-0.07, tweak=0.01)
 base.axletter(ax01, 'B', offset=-0.090)
 base.axletter(ax11, 'C', offset=-0.090, tweak=0.01)
 
+if False:
+    pubs = {}
+    with base.connect() as con:
+        q = 'select key, author, year, title, journal from publication'
+        for row in con.cursor().execute(q):
+            pubs[row['key']] = (f'{row["author"]} ({row["year"]})'
+                                f' {row["title"]}; {row["journal"]}')
+    n = 3
+    i = np.argsort(d1s)
+    va, vi = np.array(d_all[1]), np.array(d_all[2])
+    ax.plot(va[i[:n]], vi[i[:n]], 'kx')
+    va, vi = np.array(d_all[1]), np.array(d_all[2])
+    ax.plot(va[i[-n:]], vi[i[-n:]], 'kx')
+    print('Lowest')
+    for j in range(n):
+        print(f'{1 + j}. {pubs[d_all[0][i[j]]]}')
+    print()
+    print('Highest')
+    for j in range(n):
+        print(f'{1 + j}. {pubs[d_all[0][i[-j - 1]]]}')
+
 fname = 'f2-correlation.pdf'
 print(f'Saving to {fname}')
 fig.savefig(fname, dpi=300)
