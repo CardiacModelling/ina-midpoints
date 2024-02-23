@@ -20,17 +20,20 @@ with base.connect() as con:
          ' where (ni > 0 and na > 0)')
     p = [row for row in c.execute(q)]
 
-
 #
 # Create figure
 #
 print('Creating figure')
-fig = plt.figure(figsize=(9, 3.82))    # Two column size
-fig.subplots_adjust(0.08, 0.115, 0.98, 0.88, wspace=0.1)
+#fig = plt.figure(figsize=(9, 3.82))    # Two column size
+#fig.subplots_adjust(0.08, 0.115, 0.98, 0.88, wspace=0.1)
+fig = plt.figure(figsize=(6, 7))
+fig.subplots_adjust(0.12, 0.07, 0.98, 0.935, wspace=0.12, hspace=0.41)
+
 xlim = -62, -19
 ylim = -109, -59
 # NOTE: These measurements picked to manually give axes equal aspect
-grid = fig.add_gridspec(1, 3)
+#grid = fig.add_gridspec(1, 3)
+grid = fig.add_gridspec(2, 2)
 
 c1 = None # 'tab:green'
 c2 = None # 'tab:purple'
@@ -57,17 +60,23 @@ ax12.grid(True, ls=':')
 ax12.set_xlim(*xlim)
 ax12.set_ylim(*ylim)
 
-ax13 = fig.add_subplot(grid[0, 2])
-ax13.set_xlabel('$\mu_a$ (mV)')
-ax13.set_yticklabels([])
-ax13.grid(True, ls=':')
-ax13.set_xlim(*xlim)
-ax13.set_ylim(*ylim)
+ax21 = fig.add_subplot(grid[1, 0])
+ax21.set_xlabel('$\mu_a$ (mV)')
+#ax21.set_yticklabels([])
+ax21.set_ylabel('$\mu_i$ (mV)')
+ax21.grid(True, ls=':')
+ax21.set_xlim(*xlim)
+ax21.set_ylim(*ylim)
+
+ax22 = fig.add_subplot(grid[1, 1])
+ax22.set_xlabel('$\mu_a$ (mV)')
+ax22.set_yticklabels([])
+ax22.grid(True, ls=':')
+ax22.set_xlim(*xlim)
+ax22.set_ylim(*ylim)
 
 # Subunit
-kwargs = dict(ls='none', lw=5, markersize=6, markerfacecolor='none',
-              alpha=0.65, rasterized=True)
-del(kwargs['markerfacecolor'])
+kwargs = dict(ls='none', lw=5, markersize=6, alpha=0.65, rasterized=True)
 leg = dict(frameon=False, handlelength=0.15)
 sub = ['a', 'astar', 'b', 'bstar']
 v = np.array([r[:2] for r in p if r[2] == 'astar'])
@@ -92,17 +101,34 @@ ax12.legend(ncol=1, loc=(0.10, 0.995), **leg)
 
 # Cell type
 v = np.array([r[:2] for r in p if r[4] == 'HEK'])
-ax13.plot(v[:, 0], v[:, 1], m1, label=f'HEK ({len(v)})', **kwargs)
+ax21.plot(v[:, 0], v[:, 1], m1, label=f'HEK ({len(v)})', **kwargs)
 v = np.array([r[:2] for r in p if r[4] == 'CHO'])
-ax13.plot(v[:, 0], v[:, 1], m2, label=f'CHO ({len(v)})', **kwargs)
+ax21.plot(v[:, 0], v[:, 1], m2, label=f'CHO ({len(v)})', **kwargs)
 v = np.array([r[:2] for r in p if r[4] == 'Oocyte'])
-ax13.plot(v[:, 0], v[:, 1], m3, label=f'Oocyte ({len(v)})', **kwargs)
-ax13.legend(ncol=2, loc=(0.10, 0.995), **leg)
+ax21.plot(v[:, 0], v[:, 1], m3, label=f'Oocyte ({len(v)})', **kwargs)
+ax21.legend(ncol=2, loc=(0.10, 0.995), **leg)
 
-y = 0.105
-base.axletter(ax11, 'A', tweak=y, offset=-0.065)
-base.axletter(ax12, 'B', tweak=y, offset=0.004)
-base.axletter(ax13, 'C', tweak=y, offset=0.004)
+# Biggest subgroup
+del(kwargs['alpha'], kwargs['rasterized'])
+v = np.array(
+    [r[:2] for r in p if  r[2] == 'astar' and r[3] == 'yes' and r[4] == 'HEK'])
+ax22.plot(v[:, 0], v[:, 1], 'o', zorder=2, color='k',
+    label=f'a*, with $\\beta1$, HEK ({len(v)})', **kwargs)
+v = np.array(
+    [r[:2] for r in p if  r[2] != 'astar' or r[3] != 'yes' or r[4] != 'HEK'])
+ax22.plot(v[:, 0], v[:, 1], 'o', zorder=1, color='#ccc', 
+    label=f'Other ({len(v)})', **kwargs)
+ax22.legend(ncol=1, loc=(0.10, 0.995), **leg)
+
+
+#y = 0.105
+x0 = -0.1
+x1 = 0
+y = 0.06
+base.axletter(ax11, 'A', tweak=y, offset=x0)
+base.axletter(ax12, 'B', tweak=y, offset=x1)
+base.axletter(ax21, 'C', tweak=y, offset=x0)
+base.axletter(ax22, 'D', tweak=y, offset=x1)
 
 fname = 'f3-subgroups' + ('.png' if 'png' in sys.argv else '.pdf')
 print(f'Saving to {fname}')
