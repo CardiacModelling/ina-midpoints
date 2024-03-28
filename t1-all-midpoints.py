@@ -4,8 +4,10 @@
 #
 import base
 
-
 filename = 't1-all-midpoints.tex'
+nooocytes = True
+
+qo = 'where cell != "Oocyte"' if nooocytes else ''
 
 # Collect journal references
 refs = {}
@@ -69,7 +71,7 @@ with open(filename, 'w') as f:
     form = '{:.3g}'
     with base.connect() as con:
         c = con.cursor()
-        q = 'select ' + ', '.join(fields) + ' from midpoints_wt'
+        q = 'select ' + ', '.join(fields) + f' from midpoints_wt {qo}'
         for k, row in enumerate(c.execute(q)):
             x = []
             x.append(r'\citet{' + refs[row['pub']] + '}')

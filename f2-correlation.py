@@ -51,8 +51,7 @@ va, vi = np.array(d_all[1]), np.array(d_all[2])
 # Find example point
 i = np.where(va < -55)[0]
 i = i[np.where(vi[i] > -100)[0]]
-print(i, va[i], vi[i])
-
+#print(i, va[i], vi[i])
 
 # Fit line
 p1 = np.corrcoef(va, vi)[1, 0]
@@ -175,7 +174,7 @@ ax01.plot(d1s, np.sqrt(na + ni), 'o', markerfacecolor='none',
           markeredgecolor=c1)
 if highlight_example:
     print(d1s[iexample])
-    ax01.plot(d1s[iexample], np.sqrt(na + ni)[iexample], 'o', 
+    ax01.plot(d1s[iexample], np.sqrt(na + ni)[iexample], 'o',
               markerfacecolor='none', markeredgecolor='k')
 
 # Second component
@@ -188,7 +187,7 @@ ax11.plot(d2s, np.sqrt(na + ni), 'o', markerfacecolor='none',
           markeredgecolor=c2)
 if highlight_example:
     print(d2s[iexample])
-    ax11.plot(d2s[iexample], np.sqrt(na + ni)[iexample], 'o', 
+    ax11.plot(d2s[iexample], np.sqrt(na + ni)[iexample], 'o',
               markerfacecolor='none', markeredgecolor='k')
 
 base.axletter(ax, 'A', offset=-0.07, tweak=0.01)
