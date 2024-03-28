@@ -10,14 +10,18 @@ import matplotlib.pyplot as plt
 
 import base
 
+# Exclude ooocytes
+nooocytes = True
+
 
 # Gather data
 print('Gathering data')
 with base.connect() as con:
     c = con.cursor()
 
+    qand = 'and cell != "Oocyte"' if nooocytes else ''
     q = ('select va, vi, sequence, beta1, cell from midpoints_wt'
-         ' where (ni > 0 and na > 0)')
+         f' where (ni > 0 and na > 0 {qand})')
     p = [row for row in c.execute(q)]
 
 #
@@ -47,29 +51,29 @@ m4 = '*'
 m5 = 'v'
 
 ax11 = fig.add_subplot(grid[0, 0])
-ax11.set_xlabel('$\mu_a$ (mV)')
-ax11.set_ylabel('$\mu_i$ (mV)')
+ax11.set_xlabel(r'$\mu_a$ (mV)')
+ax11.set_ylabel(r'$\mu_i$ (mV)')
 ax11.grid(True, ls=':')
 ax11.set_xlim(*xlim)
 ax11.set_ylim(*ylim)
 
 ax12 = fig.add_subplot(grid[0, 1])
-ax12.set_xlabel('$\mu_a$ (mV)')
+ax12.set_xlabel(r'$\mu_a$ (mV)')
 ax12.set_yticklabels([])
 ax12.grid(True, ls=':')
 ax12.set_xlim(*xlim)
 ax12.set_ylim(*ylim)
 
 ax21 = fig.add_subplot(grid[1, 0])
-ax21.set_xlabel('$\mu_a$ (mV)')
+ax21.set_xlabel(r'$\mu_a$ (mV)')
 #ax21.set_yticklabels([])
-ax21.set_ylabel('$\mu_i$ (mV)')
+ax21.set_ylabel(r'$\mu_i$ (mV)')
 ax21.grid(True, ls=':')
 ax21.set_xlim(*xlim)
 ax21.set_ylim(*ylim)
 
 ax22 = fig.add_subplot(grid[1, 1])
-ax22.set_xlabel('$\mu_a$ (mV)')
+ax22.set_xlabel(r'$\mu_a$ (mV)')
 ax22.set_yticklabels([])
 ax22.grid(True, ls=':')
 ax22.set_xlim(*xlim)
@@ -105,7 +109,8 @@ ax21.plot(v[:, 0], v[:, 1], m1, label=f'HEK ({len(v)})', **kwargs)
 v = np.array([r[:2] for r in p if r[4] == 'CHO'])
 ax21.plot(v[:, 0], v[:, 1], m2, label=f'CHO ({len(v)})', **kwargs)
 v = np.array([r[:2] for r in p if r[4] == 'Oocyte'])
-ax21.plot(v[:, 0], v[:, 1], m3, label=f'Oocyte ({len(v)})', **kwargs)
+if len(v):
+    ax21.plot(v[:, 0], v[:, 1], m3, label=f'Oocyte ({len(v)})', **kwargs)
 ax21.legend(ncol=2, loc=(0.10, 0.995), **leg)
 
 # Biggest subgroup

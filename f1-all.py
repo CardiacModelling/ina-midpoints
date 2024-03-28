@@ -14,19 +14,21 @@ import base
 # Find as -scipy.stats.norm.ppf(0.05)
 s90 = 1.6448536269514729
 
+# Include Oocytes or not
+nooocytes = True
 
 # Gather data
 print('Gathering data')
 with base.connect() as con:
     c = con.cursor()
 
+    qand = ' and cell != "Oocyte"' if nooocytes else ''
     q = ('select vi, semi, stdi from midpoints_wt'
-         ' where ni > 0 order by vi')
+         f' where ni > 0 {qand} order by vi')
     i = [row for row in c.execute(q)]
     q = ('select va, sema, stda from midpoints_wt'
-         ' where na > 0 order by va')
+         f' where na > 0 {qand} order by va')
     a = [row for row in c.execute(q)]
-
 
 #
 # Create figure
@@ -45,7 +47,7 @@ grid = fig.add_gridspec(2, 2, height_ratios=[4.7, 1])
 ax1 = fig.add_subplot(grid[0, :])
 ax1.set_xlabel('Membrane potential (mV)')
 ax1.set_xlim(-120, 0)
-ax1.set_ylim(-2, 187)
+ax1.set_ylim(-2, 1 + max(len(a), len(i)))
 for s in ax1.spines.values():
     s.set_visible(False)
 ax1.spines['bottom'].set_visible(True)
@@ -80,9 +82,9 @@ for k, d in enumerate(a):
 
 ms2 = 12
 elements = [
-    matplotlib.lines.Line2D([0], [0], marker=m, color='w', label='$\mu_i$',
+    matplotlib.lines.Line2D([0], [0], marker=m, color='w', label=r'$\mu_i$',
                             markersize=ms2, markerfacecolor=ci),
-    matplotlib.lines.Line2D([0], [0], marker=m, color='w', label='$\mu_a$',
+    matplotlib.lines.Line2D([0], [0], marker=m, color='w', label=r'$\mu_a$',
                             markersize=ms2, markerfacecolor=ca),
     matplotlib.lines.Line2D([0], [0], color=ssem['color'], label='SEM',
                             lw=ssem['lw']),
@@ -105,9 +107,9 @@ ax21.set_ylabel('Percentage')
 ax21.set_xlim(-112, -18)
 
 w = np.ones(len(vi)) / len(vi) * 100
-ax21.hist(vi, weights=w, edgecolor='tab:orange', label='$\mu_i$', **kwargs)
+ax21.hist(vi, weights=w, edgecolor='tab:orange', label=r'$\mu_i$', **kwargs)
 w = np.ones(len(va)) / len(va) * 100
-ax21.hist(va, weights=w, edgecolor='tab:blue', label='$\mu_a$', **kwargs)
+ax21.hist(va, weights=w, edgecolor='tab:blue', label=r'$\mu_a$', **kwargs)
 ax21.legend(loc='upper left', frameon=False)
 
 bins = np.arange(0, 24, 1)
@@ -116,7 +118,7 @@ xlim = -1, 24
 ylim = 0, 22
 
 ax22 = fig.add_subplot(grid[1, 1])
-ax22.set_xlabel('$\sigma$ (mV)')
+ax22.set_xlabel(r'$\sigma$ (mV)')
 ax22.set_ylabel('Percentage')
 ax22.set_xlim(*xlim)
 ax22.set_ylim(*ylim)
@@ -126,10 +128,10 @@ ax22t = ax22.secondary_xaxis('top', functions=(top90, frp90))
 ax22t.set_xlabel('90th percentile (mV)')
 
 w = np.ones(len(stdi)) / len(stdi) * 100
-ax22.hist(stdi, weights=w, edgecolor='tab:orange', label='$\sigma_i$',
+ax22.hist(stdi, weights=w, edgecolor='tab:orange', label=r'$\sigma_i$',
           **kwargs)
 w = np.ones(len(stda)) / len(stda) * 100
-ax22.hist(stda, weights=w, edgecolor='tab:blue', label='$\sigma_a$', **kwargs)
+ax22.hist(stda, weights=w, edgecolor='tab:blue', label=r'$\sigma_a$', **kwargs)
 ax22.legend(loc='upper right', frameon=False)
 
 #

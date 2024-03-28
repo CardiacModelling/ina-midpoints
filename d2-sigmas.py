@@ -7,8 +7,11 @@ import numpy as np
 
 import base
 
+nooocytes = True
 
 q = 'select pub, na, ni, stda, stdi, sema, semi from midpoints_wt'
+if nooocytes:
+    q += ' where cell != "Oocyte"'
 
 # Query db
 na, ni = [], []
@@ -27,21 +30,21 @@ with base.connect() as con:
             semi.append(row['semi'])
 
 # Calculate
-s90 = 1.6448536269514729
+w90 = 3.2897072539029457
 stdi = np.array(stdi)
 stda = np.array(stda)
 print('Standard deviation of inactivation')
-print(f'Min:    {np.min(stdi)}')
-print(f'Max:    {np.max(stdi)}')
-print(f'Median: {np.median(stdi)}')
+print(f'Min:    {np.min(stdi)} ({np.min(stdi):.1f})')
+print(f'Max:    {np.max(stdi)} ({np.max(stdi):.1f})')
+print(f'Median: {np.median(stdi)} ({np.median(stdi):.1f})')
 print('90th percentile activation')
-print(f'Median: {np.median(stdi) * 2 * s90}')
-print(f'Max:    {np.max(stdi) * 2 * s90}')
+print(f'Median: {np.median(stdi) * w90} ({np.median(stdi) * w90:.0f})')
+print(f'Max:    {np.max(stdi) * w90} ({np.max(stdi) * w90:.0f})')
 print()
 print('Standard deviation of activation')
-print(f'Min:    {np.min(stda)}')
-print(f'Max:    {np.max(stda)}')
-print(f'Median: {np.median(stda)}')
+print(f'Min:    {np.min(stda)} ({np.min(stda):.1f})')
+print(f'Max:    {np.max(stda)} ({np.max(stda):.1f})')
+print(f'Median: {np.median(stda)} ({np.median(stda):.1f})')
 print('90th percentile activation')
-print(f'Median: {np.median(stda) * 2 * s90}')
-print(f'Max:    {np.max(stda) * 2 * s90}')
+print(f'Median: {np.median(stda) * w90} ({np.median(stda) * w90:.0f})')
+print(f'Max:    {np.max(stda) * w90} ({np.max(stda) * w90:.0f})')

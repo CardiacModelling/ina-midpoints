@@ -6,8 +6,11 @@ import numpy as np
 
 import base
 
+nooocytes = True
 
 q = 'select vi, ni, va, na from midpoints_wt'
+if nooocytes:
+    q += ' where cell != "Oocyte"'
 
 # Query db
 na, ni = [], []
