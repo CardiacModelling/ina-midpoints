@@ -17,7 +17,7 @@ with base.connect() as con:
     for k, row in enumerate(c.execute(q)):
         refs[row['key']] = row['tex']
 
-# Create table file
+# Fields to select from DB
 fields = [
     'pub',
     'va',
@@ -49,8 +49,9 @@ with open(filename, 'w') as f:
     # Header
     eol = '\n'
     f.write(r'\startrowcolors' + eol)
-    f.write(r'\begin{longtable}{p{5cm}|lll|lll|lll}' + eol)
+    f.write(r'\begin{longtable}{p{6cm}|lll|lll|lll}' + eol)
     f.write(r'\hline' + eol)
+    f.write(r'\rowcolor{white}' + eol)
     f.write(r'Publication')
     f.write(r' & $V_a$ & $\sigma_a$  & $n_a$')
     f.write(r' & $V_i$ & $\sigma_i$  & $n_i$')

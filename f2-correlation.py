@@ -2,9 +2,12 @@
 #
 # Figure 2: Correlation between Va and Vi
 #
+import sys
+
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
+import scipy
 
 import base
 
@@ -14,6 +17,9 @@ s90 = 1.6448536269514729
 
 # Include oocytes
 nooocytes = True
+
+# Show ellipses
+ellipses = False
 
 # Plot tweaks
 highlight_example = True
@@ -64,6 +70,48 @@ print('Mean:')
 print(f'  {mu_a}')
 print(f'  {mu_i}')
 
+
+def ci_linear_1d(x, y, alpha=95):
+    """
+    Calculates a confidence interval for data ``(x, y)``, returning a function
+    to calculate the symmetric interval.
+
+    Use::
+
+        ci = ci_linear_1d(x_data, y_data)
+
+        x = np.linspace(...)
+        y = a + b * x
+        ax.fill_between(x, y + ci, y - ci)
+
+    See: https://github.com/BMClab/BMC/blob/master/notebooks/CurveFitting.ipynb
+    """
+    x, y = np.asarray(x), np.asarray(y)
+
+    b, a = np.polyfit(x, y, 1)
+    n = len(x)  # Number of observations
+    m = 2       # Number of parameters
+    d = n - m   # Degrees of freedom
+
+    # For a 90% interval we need to use 0.975
+    # See e.g. https://en.wikipedia.org/wiki/Confidence_interval#Example
+    alpha = (100 - alpha) / 100     # Turn 95 into 0.05
+    alpha = 1 - alpha / 2
+    t = scipy.stats.t.ppf(alpha, n - m)
+    print(alpha)
+
+    # Residuals
+    r = y - (a + b * x)
+    s = np.sqrt(np.sum(r**2) / d)   # Standard deviation of the residuals
+
+    # Mean, and other fixed terms
+    mu = np.mean(x)
+    ts = t * s
+    ni = 1 / n
+    di = 1 / np.sum((x - mu)**2)
+    return lambda z: ts * np.sqrt(ni + (z - mu)**2 * di)
+
+
 # Fit line with slope of 1
 a2 = np.polyfit(va, vi - va, 0)[0]
 b2 = 1
@@ -81,7 +129,6 @@ ylim = -112, -58
 # NOTE: These measurements chosen to get almost equal aspect manually
 grid = fig.add_gridspec(2, 2)
 
-
 c1 = 'tab:orange'
 c2 = 'tab:red'
 
@@ -93,32 +140,41 @@ ax.set(xlim=xlim, ylim=ylim)
 #ax.axis('equal')  This changes the limits
 
 # Ellipses
-for va, vi, stda, stdi in zip(*d_all[1:5]):
-    e = matplotlib.patches.Ellipse(
-        (va, vi), width=2 * s90 * stda, height=2 * s90 * stdi,
-        facecolor='tab:blue', edgecolor='k', alpha=0.05)
-    ax.add_artist(e).set_rasterized(True)
+if ellipses:
+    for va, vi, stda, stdi in zip(*d_all[1:5]):
+        e = matplotlib.patches.Ellipse(
+            (va, vi), width=2 * s90 * stda, height=2 * s90 * stdi,
+            facecolor='tab:blue', edgecolor='k', alpha=0.05)
+        ax.add_artist(e).set_rasterized(True)
 
 # Projections / orthogonal
 a, b = a1, b1
 
 # Mean x and y, projected onto line (should stay the same!)
-va, vi = np.mean(d_all[1]), np.mean(d_all[2])
-f = (va + (vi - a) * b) / (1 + b * b)
+ma, mi = np.mean(va), np.mean(vi)
+f = (ma + (mi - a) * b) / (1 + b * b)
 mx, my = f, a + f * b
 
 # Project all points onto fit, then get tangential and orthogonal length
-va, vi = d_all[1], d_all[2]
 d1s = ((va - mx) + b * (vi - my)) / np.sqrt(1 + b**2)
 d2s = ((vi - my) - b * (va - mx)) / np.sqrt(1 + b**2)
 
 # Plot linear fit
-xlim = np.array(xlim)
-l1 = ax.plot(xlim, a1 + b1 * xlim, '-', color='tab:pink',
+l1_color = 'tab:blue'
+x = np.array(xlim)
+l1 = ax.plot(x, a1 + b1 * x, '-', color=l1_color,
              label=f'{a1:.1f} mV + {b1:.2f} $V_a$')
 
+# Plot confidence infterval
+x = np.linspace(xlim[0], xlim[1], 100)
+ci = ci_linear_1d(va, vi)
+l2 = ax.plot(x, a1 + b1 * x + ci(x), '--', color=l1_color,
+             label='95% confidence interval')
+ax.plot(x, a1 + b1 * x - ci(x), '--', color=l1_color)
+ax.fill_between(x, a1 + b1 * x + ci(x), a1 + b1 * x - ci(x), color='#ddd')
+
 # Plot fixed-slope fit
-l2 = ax.plot(xlim, a2 + b2 * xlim, '--', color='tab:pink',
+l3 = ax.plot(x, a2 + b2 * x, '-', color='tab:green',
              label=f'{a2:.1f} mV + {b2:.2f} $V_a$')
 
 # Plot midpoints
@@ -129,36 +185,40 @@ if highlight_example:
 #            markerfacecolor='w', markeredgecolor='k')
 
 # Example decomposition
-va, vi = d_all[1][iexample], d_all[2][iexample]
-f = (va + (vi - a) * b) / (1 + b * b)
+ea, ei = d_all[1][iexample], d_all[2][iexample]
+f = (ea + (ei - a) * b) / (1 + b * b)
 x, y = f, a + f * b
 arrow = dict(length_includes_head=True, edgecolor='k',
              width=0.5, head_width=2.0, head_length=2.0, lw=0.5, zorder=3)
 ar1 = ax.arrow(mu_a, mu_i, (x - mu_a), (y - mu_i), facecolor=c1, **arrow)
-ar2 = ax.arrow(x, y, (va - x), (vi - y), facecolor=c2, **arrow)
-print(f'Example point: {va}, {vi}')
+ar2 = ax.arrow(x, y, (ea - x), (ei - y), facecolor=c2, **arrow)
+print(f'Example point: {ea}, {ei}')
 print(f'             : {d1s[iexample]}, {d2s[iexample]}')
 
 # Mean
 mean = ax.plot(mu_a, mu_i, '*', color='yellow', lw=5, markersize=15,
                markeredgecolor='k', markeredgewidth=1, label='mean', zorder=4)
 
+
 # Custom legend
 def l2d(**kwargs):
     return matplotlib.lines.Line2D([0], [0], **kwargs)
 
-ms2 = 12
-elements = [
-    l2d(marker=m, color='k', ls='none', markerfacecolor='w',
-        label=f'Experiments ({len(d_all[1])})'),
-    l2d(marker=m, color='tab:blue', ls='none', label=r'90th percentiles'),
-    l2d(marker='*', ls='none', color='yellow', markersize=11,
-        markeredgecolor='k', label='Mean-of-means'),
-    l1[0],
-    l2[0],
-]
 
-ax.legend(loc='lower right', handles=elements, framealpha=1 , fontsize=9)
+ms2 = 12
+elements = []
+elements.append(l2d(marker=m, color='k', ls='none', markerfacecolor='w',
+                    label=f'Experiments ({len(d_all[1])})'))
+if ellipses:
+    elements.append(l2d(marker=m, color='tab:blue', ls='none',
+                        label=r'90th percentiles'))
+elements.append(l2d(marker='*', ls='none', color='yellow', markersize=11,
+                    markeredgecolor='k', label='Mean-of-means'))
+elements.append(l1[0])
+elements.append(l2[0])
+elements.append(l3[0])
+
+ax.legend(loc='lower right', handles=elements, framealpha=1, fontsize=9)
 
 # Principal components vs study size
 na, ni = np.array(d_all[5]), np.array(d_all[6])
@@ -215,6 +275,7 @@ if False:
     for j in range(n):
         print(f'{1 + j}. {pubs[d_all[0][i[-j - 1]]]}')
 
-fname = 'f2-correlation.pdf'
+
+fname = 'f2-correlation' + ('.png' if 'png' in sys.argv else '.pdf')
 print(f'Saving to {fname}')
 fig.savefig(fname, dpi=300)

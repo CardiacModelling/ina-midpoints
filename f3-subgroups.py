@@ -5,7 +5,6 @@
 import sys
 
 import numpy as np
-import matplotlib
 import matplotlib.pyplot as plt
 
 import base
@@ -20,7 +19,7 @@ with base.connect() as con:
     c = con.cursor()
 
     qand = 'and cell != "Oocyte"' if nooocytes else ''
-    q = ('select va, vi, sequence, beta1, cell from midpoints_wt'
+    q = ('select va, vi, sequence, beta1, cell, pub from midpoints_wt'
          f' where (ni > 0 and na > 0 {qand})')
     p = [row for row in c.execute(q)]
 
@@ -28,21 +27,18 @@ with base.connect() as con:
 # Create figure
 #
 print('Creating figure')
-#fig = plt.figure(figsize=(9, 3.82))    # Two column size
-#fig.subplots_adjust(0.08, 0.115, 0.98, 0.88, wspace=0.1)
-fig = plt.figure(figsize=(6, 7))
-fig.subplots_adjust(0.12, 0.07, 0.98, 0.935, wspace=0.12, hspace=0.41)
+fig = plt.figure(figsize=(9, 7.9))        # Two column size
+fig.subplots_adjust(0.08, 0.06, 0.985, 0.940, wspace=0.1, hspace=0.36)
 
 xlim = -62, -19
 ylim = -109, -59
 # NOTE: These measurements picked to manually give axes equal aspect
-#grid = fig.add_gridspec(1, 3)
-grid = fig.add_gridspec(2, 2)
+grid = fig.add_gridspec(2, 3)
 
-c1 = None # 'tab:green'
-c2 = None # 'tab:purple'
-c3 = None # 'tab:brown'
-c4 = None # 'tab:brown'
+c1 = None  # 'tab:green'
+c2 = None  # 'tab:purple'
+c3 = None  # 'tab:brown'
+c4 = None  # 'tab:brown'
 c5 = '#aaa'
 m1 = 'o'
 m2 = 's'
@@ -64,9 +60,15 @@ ax12.grid(True, ls=':')
 ax12.set_xlim(*xlim)
 ax12.set_ylim(*ylim)
 
+ax13 = fig.add_subplot(grid[0, 2])
+ax13.set_xlabel(r'$\mu_a$ (mV)')
+ax13.set_yticklabels([])
+ax13.grid(True, ls=':')
+ax13.set_xlim(*xlim)
+ax13.set_ylim(*ylim)
+
 ax21 = fig.add_subplot(grid[1, 0])
 ax21.set_xlabel(r'$\mu_a$ (mV)')
-#ax21.set_yticklabels([])
 ax21.set_ylabel(r'$\mu_i$ (mV)')
 ax21.grid(True, ls=':')
 ax21.set_xlim(*xlim)
@@ -78,6 +80,13 @@ ax22.set_yticklabels([])
 ax22.grid(True, ls=':')
 ax22.set_xlim(*xlim)
 ax22.set_ylim(*ylim)
+
+ax23 = fig.add_subplot(grid[1, 2])
+ax23.set_xlabel(r'$\mu_a$ (mV)')
+ax23.set_yticklabels([])
+ax23.grid(True, ls=':')
+ax23.set_xlim(*xlim)
+ax23.set_ylim(*ylim)
 
 # Subunit
 kwargs = dict(ls='none', lw=5, markersize=6, alpha=0.65, rasterized=True)
@@ -105,35 +114,63 @@ ax12.legend(ncol=1, loc=(0.10, 0.995), **leg)
 
 # Cell type
 v = np.array([r[:2] for r in p if r[4] == 'HEK'])
-ax21.plot(v[:, 0], v[:, 1], m1, label=f'HEK ({len(v)})', **kwargs)
+ax13.plot(v[:, 0], v[:, 1], m1, label=f'HEK ({len(v)})', **kwargs)
 v = np.array([r[:2] for r in p if r[4] == 'CHO'])
-ax21.plot(v[:, 0], v[:, 1], m2, label=f'CHO ({len(v)})', **kwargs)
+ax13.plot(v[:, 0], v[:, 1], m2, label=f'CHO ({len(v)})', **kwargs)
 v = np.array([r[:2] for r in p if r[4] == 'Oocyte'])
 if len(v):
-    ax21.plot(v[:, 0], v[:, 1], m3, label=f'Oocyte ({len(v)})', **kwargs)
-ax21.legend(ncol=2, loc=(0.10, 0.995), **leg)
+    ax13.plot(v[:, 0], v[:, 1], m3, label=f'Oocyte ({len(v)})', **kwargs)
+ax13.legend(ncol=2, loc=(0.10, 0.995), **leg)
 
 # Biggest subgroup
-del(kwargs['alpha'], kwargs['rasterized'])
+del kwargs['alpha'], kwargs['rasterized']
 v = np.array(
-    [r[:2] for r in p if  r[2] == 'astar' and r[3] == 'yes' and r[4] == 'HEK'])
-ax22.plot(v[:, 0], v[:, 1], 'o', zorder=2, color='k',
-    label=f'a*, with $\\beta1$, HEK ({len(v)})', **kwargs)
+    [r[:2] for r in p if r[2] == 'astar' and r[3] == 'yes' and r[4] == 'HEK'])
+ax21.plot(v[:, 0], v[:, 1], '*', zorder=2, color='k',
+          label=f'a*, with $\\beta1$, HEK ({len(v)})', **kwargs)
 v = np.array(
-    [r[:2] for r in p if  r[2] != 'astar' or r[3] != 'yes' or r[4] != 'HEK'])
-ax22.plot(v[:, 0], v[:, 1], 'o', zorder=1, color='#ccc', 
-    label=f'Other ({len(v)})', **kwargs)
+    [r[:2] for r in p if r[2] != 'astar' or r[3] != 'yes' or r[4] != 'HEK'])
+ax21.plot(v[:, 0], v[:, 1], 'o', zorder=1, color='#ccc',
+          label=f'Other ({len(v)})', **kwargs)
+ax21.legend(ncol=1, loc=(0.10, 0.995), **leg)
+
+# Linear fit
+v = np.array([r[:2] for r in p])
+b1, a1 = np.polyfit(v[:, 0], v[:, 1], 1)
+x = np.array(xlim)
+y = a1 + b1 * x
+
+# Kapplinger
+ax22.plot(x, y, '-', color='tab:blue', zorder=4)
+v = np.array([r[:2] for r in p if r[5] == 'Kapplinger 2015'])
+ax22.plot(v[:, 0], v[:, 1], '*', zorder=3, color='k',
+          label=f'Kapplinger et al. 2015 ({len(v)})', **kwargs)
+v = np.array([r[:2] for r in p if r[5] != 'Kapplinger 2015'])
+ax22.plot(v[:, 0], v[:, 1], 'o', zorder=2, color='#ccc',
+          label=f'Other ({len(v)})', **kwargs)
 ax22.legend(ncol=1, loc=(0.10, 0.995), **leg)
 
+# Tan
+ax23.plot(x, y, '-', color='tab:blue', zorder=4)
+v = np.array([r[:2] for r in p if r[5] == 'Tan 2005'])
+ax23.plot(v[:, 0], v[:, 1], '*', zorder=3, color='k',
+          label=f'Tan et al. 2005 ({len(v)})', **kwargs)
+v = np.array([r[:2] for r in p if r[5] != 'Tan 2005'])
+ax23.plot(v[:, 0], v[:, 1], 'o', zorder=2, color='#ccc',
+          label=f'Other ({len(v)})', **kwargs)
+ax23.legend(ncol=1, loc=(0.10, 0.995), **leg)
 
 #y = 0.105
-x0 = -0.1
+x0 = -0.069
 x1 = 0
-y = 0.06
-base.axletter(ax11, 'A', tweak=y, offset=x0)
-base.axletter(ax12, 'B', tweak=y, offset=x1)
-base.axletter(ax21, 'C', tweak=y, offset=x0)
-base.axletter(ax22, 'D', tweak=y, offset=x1)
+y0 = 0.055
+y1 = 0.052
+base.axletter(ax11, 'A', tweak=y0, offset=x0)
+base.axletter(ax12, 'B', tweak=y0, offset=x1)
+base.axletter(ax13, 'C', tweak=y0, offset=x1)
+base.axletter(ax21, 'D', tweak=y1, offset=x0)
+base.axletter(ax22, 'E', tweak=y1, offset=x1)
+base.axletter(ax23, 'F', tweak=y1, offset=x1)
 
 fname = 'f3-subgroups' + ('.png' if 'png' in sys.argv else '.pdf')
 print(f'Saving to {fname}')

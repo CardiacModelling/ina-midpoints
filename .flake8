@@ -32,3 +32,6 @@ ignore=
   # Line break after binary operator
   W504,
 
+  # Do not assign a lambda expression, use a def
+  E731,
+

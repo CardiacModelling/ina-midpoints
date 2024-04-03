@@ -56,7 +56,7 @@ ax1.xaxis.set_minor_locator(matplotlib.ticker.MultipleLocator(5))
 ax1.get_yaxis().set_visible(False)
 ax1.grid(ls='--', color='#cccccc', zorder=0)
 
-sstd = dict(color='k', alpha=0.4, rasterized=True)
+sstd = dict(color='#999')
 ssem = dict(color='k', lw=3)
 ca = 'tab:blue'
 ci = 'tab:orange'
@@ -89,7 +89,7 @@ elements = [
     matplotlib.lines.Line2D([0], [0], color=ssem['color'], label='SEM',
                             lw=ssem['lw']),
     matplotlib.lines.Line2D([0], [0], color=sstd['color'],
-        label='90th percentile'),
+                            label='90th percentile'),
 ]
 ax1.legend(loc='upper left', frameon=False, handles=elements)
 

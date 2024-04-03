@@ -10,13 +10,13 @@ try:
     frame = inspect.currentframe()
     DIR = os.path.realpath(os.path.dirname(inspect.getfile(frame)))
 finally:
-    del(frame)
+    del frame
 
 # DB file
 PATH_DB = os.path.join(DIR, 'mutations.sqlite')
 
 # Delete imported libraries
-del(os, inspect)
+del os, inspect
 
 
 #
