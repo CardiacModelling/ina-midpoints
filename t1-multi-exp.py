@@ -4,7 +4,7 @@
 #
 import base
 
-filename = 't2-multi-exp.tex'
+filename = 't1-multi-exp.tex'
 nooocytes = True
 
 qo = 'where cell != "Oocyte"' if nooocytes else ''
@@ -17,6 +17,9 @@ with base.connect() as con:
     for k, row in enumerate(c.execute(q)):
         refs[row['key']] = row['tex']
 
+caption = """
+All reviewed studies containing more than one experiment.
+""".strip()
 
 print(f'Writing to {filename}...')
 with open(filename, 'w') as f:
@@ -24,6 +27,7 @@ with open(filename, 'w') as f:
     eol = '\n'
     f.write(r'\startrowcolors' + eol)
     f.write(r'\begin{longtable}{p{6cm}|l}' + eol)
+    f.write(r'\caption{' + caption + r'} \\' + eol)
     f.write(r'\hline' + eol)
     f.write(r'\rowcolor{white}' + eol)
     f.write(r'Publication')

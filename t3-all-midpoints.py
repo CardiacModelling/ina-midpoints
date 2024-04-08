@@ -4,7 +4,7 @@
 #
 import base
 
-filename = 't1-all-midpoints.tex'
+filename = 't3-all-midpoints.tex'
 nooocytes = True
 
 qo = 'where cell != "Oocyte"' if nooocytes else ''
@@ -43,6 +43,13 @@ def seq(s):
     return s
 
 
+# Caption
+i = 3
+caption = r"""
+All experiments reviewed in this manuscript.
+A structured database containing the same data is available from \repo.
+""".strip()
+
 # Create table
 print(f'Writing to {filename}...')
 with open(filename, 'w') as f:
@@ -50,9 +57,10 @@ with open(filename, 'w') as f:
     eol = '\n'
     f.write(r'\startrowcolors' + eol)
     f.write(r'\begin{longtable}{p{6cm}|lll|lll|lll}' + eol)
+    f.write(r'\caption{' + caption + r'} \\' + eol)
     f.write(r'\hline' + eol)
     f.write(r'\rowcolor{white}' + eol)
-    f.write(r'Publication')
+    f.write(r'Study')
     f.write(r' & $V_a$ & $\sigma_a$  & $n_a$')
     f.write(r' & $V_i$ & $\sigma_i$  & $n_i$')
     f.write(r' & Cell & $\alpha$ & $\beta1$ \\' + eol)
@@ -60,7 +68,7 @@ with open(filename, 'w') as f:
     f.write(r'\endfirsthead' + eol)
     f.write(r'\hline' + eol)
     f.write(r'\rowcolor{white}' + eol)
-    f.write('Publication')
+    f.write('Study')
     f.write(r' & $V_a$ & $\sigma_a$  & $n_a$')
     f.write(r' & $V_i$ & $\sigma_i$  & $n_i$')
     f.write(r' & Cell & $\alpha$ & $\beta1$ \\' + eol)
