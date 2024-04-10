@@ -63,12 +63,13 @@ i = i[np.where(vi[i] > -100)[0]]
 p1 = np.corrcoef(va, vi)[1, 0]
 b1, a1 = np.polyfit(va, vi, 1)
 print('Fit to all data')
-print(f'  a, b: {a1}, {b1}')
-print(f'  Pearson correlation coefficient: {p1}')
+print(f'  a, b: {a1:.1f}, {b1:.2f}')
+print(f'  Pearson correlation coefficient: {p1:.2f}')
+print(f'                          squared: {p1**2:.2f}')
 mu_a, mu_i = np.mean(va), np.mean(vi)
 print('Mean:')
-print(f'  {mu_a}')
-print(f'  {mu_i}')
+print(f'  {mu_a:.1f}')
+print(f'  {mu_i:.1f}')
 
 
 def ci_linear_1d(x, y, alpha=95):

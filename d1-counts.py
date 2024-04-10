@@ -25,6 +25,7 @@ with base.connect() as con:
     print(f'Total publications: {row[0]}')
 
     # Count Va measurements
+    print()
     row = next(c.execute(
         f'select count(va) from midpoints_wt where na > 0 {a}'))
     print(f'Total Va reports: {row[0]}')
@@ -35,7 +36,14 @@ with base.connect() as con:
     print(f'Total Vi reports: {row[0]}')
 
     # Count Va + Vi measurements
+    print()
     row = next(c.execute(
-        f'select count(vi) from midpoints_wt where ni > 0 and na > 0 {a}'))
+        f'select count(vi) from midpoints_wt where na > 0 and ni > 0 {a}'))
     print(f'Total Va+Vi reports: {row[0]}')
+    row = next(c.execute(
+        f'select count(vi) from midpoints_wt where na > 0 and ni == 0 {a}'))
+    print(f'Va-only reports: {row[0]}')
+    row = next(c.execute(
+        f'select count(vi) from midpoints_wt where ni > 0 and na == 0 {a}'))
+    print(f'Vi-only reports: {row[0]}')
 
