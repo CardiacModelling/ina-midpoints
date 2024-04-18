@@ -3,9 +3,8 @@
 This repository contains the data and code accompanying the paper 
 
 > Variability in reported midpoints of (in)activation for cardiac INa
-> Michael Clerx, Someone, Someone
-> Published somewhere
-> DOI
+> Michael Clerx, Paul G. A. Volders, Gary R. Mirams
+> 2024
 
 The data is all derived from an sqlite database (see `base/mutations.sqlite`) that was created in 2016 for the study
 
@@ -18,7 +17,7 @@ The data is all derived from an sqlite database (see `base/mutations.sqlite`) th
 ## Requirements
 
 The database can be opened with any [SQLite](https://en.wikipedia.org/wiki/SQLite) compatible software.
-The included scripts require Python 3.6 or newer, with the libraries listed in `requirements.txt` (numpy and matplotlib).
+The included scripts require Python 3.6 or newer, with the libraries listed in `requirements.txt`.
 
 ## Figures
 

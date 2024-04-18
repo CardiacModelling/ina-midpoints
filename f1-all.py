@@ -11,7 +11,6 @@ import numpy as np
 import base
 
 # Sigma multiplier to get 90-th percentile
-# Find as -scipy.stats.norm.ppf(0.05)
 s90 = 1.6448536269514729
 
 # Include Oocytes or not
