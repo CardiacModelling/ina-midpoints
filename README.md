@@ -2,15 +2,15 @@
 
 This repository contains the data and code accompanying the paper 
 
-> Variability in reported midpoints of (in)activation of cardiac INa
-> Michael Clerx, Paul G. A. Volders, Gary R. Mirams
+> Variability in reported midpoints of (in)activation of cardiac INa.
+> Michael Clerx, Paul G. A. Volders, Gary R. Mirams.
 > 2024
 
 The data is all derived from an sqlite database (see `base/mutations.sqlite`) that was created in 2016 for the study
 
-> Predicting changes to INa from missense mutations in human SCN5A
-> Michael Clerx, Jordi Heijman, Pieter Collins, Paul G.A. Volders
-> Scientific Reports
+> Predicting changes to INa from missense mutations in human SCN5A.
+> Michael Clerx, Jordi Heijman, Pieter Collins, Paul G.A. Volders.
+> Scientific Reports.
 > https://doi.org/10.1038/s41598-018-30577-5
 > and https://github.com/MichaelClerx/mutations-scn5a
 
