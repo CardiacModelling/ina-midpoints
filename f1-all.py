@@ -124,7 +124,7 @@ ax22.set_ylim(*ylim)
 top90 = lambda sigma: sigma * s90 * 2
 frp90 = lambda p90: p90 / (s90 * 2)
 ax22t = ax22.secondary_xaxis('top', functions=(top90, frp90))
-ax22t.set_xlabel('90th percentile (mV)')
+ax22t.set_xlabel('5th-95th percentile range (mV)')
 
 w = np.ones(len(stdi)) / len(stdi) * 100
 ax22.hist(stdi, weights=w, edgecolor='tab:orange', label=r'$\sigma_i$',
