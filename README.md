@@ -2,7 +2,7 @@
 
 This repository contains the data and code accompanying the paper 
 
-> Variability in reported midpoints of (in)activation for cardiac INa
+> Variability in reported midpoints of (in)activation of cardiac INa
 > Michael Clerx, Paul G. A. Volders, Gary R. Mirams
 > 2024
 
