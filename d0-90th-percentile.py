@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# 90th-percentil of a normal distribution
+# 5 to 95th-percentile of a normal distribution, used to calculate
 #
 import scipy
 
@@ -15,6 +15,6 @@ print('Should be 5%:', scipy.stats.norm.cdf(p05))
 print('Should be 90%:', scipy.stats.norm.cdf(-p05) - scipy.stats.norm.cdf(p05))
 
 # The width of this bracket is 2 * -p05
-print('Width of the 90% percentile range:', 2 * -p05)
+print('Width of the 5th-95th percentile range:', 2 * -p05)
 print('Alternatively, +-', -p05)
 

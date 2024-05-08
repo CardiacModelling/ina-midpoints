@@ -88,7 +88,7 @@ elements = [
     matplotlib.lines.Line2D([0], [0], color=ssem['color'], label='SEM',
                             lw=ssem['lw']),
     matplotlib.lines.Line2D([0], [0], color=sstd['color'],
-                            label='90th percentile'),
+                            label='5th-95th percentile'),
 ]
 ax1.legend(loc='upper left', frameon=False, handles=elements)
 

@@ -36,15 +36,16 @@ The included scripts require Python 3.6 or newer, with the libraries listed in `
 Numbers that appear in the text can be obtained using the scripts listed below.
 
 - `d0-90th-percentile.py`
-  - Calculates and outputs the 90th percentile of a normal distribution.
+  - Calculates and outputs the 5th-95th percentile range of a normal distribution.
 - `d1-counts.py`
   - Number of studies surveyed.
-  - Number of reports (1 or more per publication) of `Va` and/or `Vi`.
-  - Number of reports of `Va` AND `Vi`.
+  - Number of reports (1 or more per publication) of mean `Va` and/or `Vi`.
+  - Number of reports of mean `Va` AND `Vi`.
+  - Total cell counts
 - `d2-sigmas.py`
-  - Min/max and mean of standard deviation in `Va` in `Vi`.
+  - Min, max, median of standard deviation in mean `Va` in `Vi`.
 - `d3-means.py`
-  - Min/max and mean of `Va` and `Vi`.
+  - Min, max, median, and range of mean `Va` and `Vi`.
 - `d4-within-exp`
   - Range of between-experiment variability in two studies with more than 1
     experiment.
@@ -53,4 +54,5 @@ Numbers that appear in the text can be obtained using the scripts listed below.
 - `f2-correlation.py`
   - Best fit slope and offset.
   - Pearson correlation coefficient.
+  - Fixed-slope fit offset
 
