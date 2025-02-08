@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Figure 1: All data, sorted from low to high, no correlations
+# Figure 2: All data, sorted from low to high, no correlations
 #
 import sys
 
@@ -142,6 +142,6 @@ base.axletter(ax1, 'A', offset=x)
 base.axletter(ax21, 'B', offset=x, tweak=y)
 base.axletter(ax22, 'C', tweak=y)
 
-fname = 'f1-all' + ('.png' if 'png' in sys.argv else '.pdf')
+fname = 'f2-all' + ('.png' if 'png' in sys.argv else '.pdf')
 print(f'Saving to {fname}')
 fig.savefig(fname, dpi=300)

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Figure 2: Correlation between Va and Vi
+# Figure 3: Correlation between Va and Vi
 #
 import sys
 
@@ -276,6 +276,6 @@ if False:
         print(f'{1 + j}. {pubs[d_all[0][i[-j - 1]]]}')
 
 
-fname = 'f2-correlation' + ('.png' if 'png' in sys.argv else '.pdf')
+fname = 'f3-correlation' + ('.png' if 'png' in sys.argv else '.pdf')
 print(f'Saving to {fname}')
 fig.savefig(fname, dpi=300)

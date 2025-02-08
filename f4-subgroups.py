@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Figure 3: Highlighted subgroups
+# Figure 4: Highlighted subgroups
 #
 import sys
 
@@ -172,6 +172,6 @@ base.axletter(ax21, 'D', tweak=y1, offset=x0)
 base.axletter(ax22, 'E', tweak=y1, offset=x1)
 base.axletter(ax23, 'F', tweak=y1, offset=x1)
 
-fname = 'f3-subgroups' + ('.png' if 'png' in sys.argv else '.pdf')
+fname = 'f4-subgroups' + ('.png' if 'png' in sys.argv else '.pdf')
 print(f'Saving to {fname}')
 fig.savefig(fname)

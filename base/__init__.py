@@ -13,7 +13,7 @@ finally:
     del frame
 
 # DB file
-PATH_DB = os.path.join(DIR, 'mutations.sqlite')
+PATH_DB = os.path.join(DIR, 'midpoints.sqlite')
 
 # Delete imported libraries
 del os, inspect
