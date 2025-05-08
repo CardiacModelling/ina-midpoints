@@ -36,10 +36,12 @@ d = occs('V high', ahi)
 print(f'Modal protocol: hold at {a}, step from {b} to {d} in {c}mV steps')
 with base.connect() as con:
     r = con.cursor()
-    q = (f'select pah from midpoints_wt where pah == {a} and palo == {b} and'
+    q = (f'select pub from midpoints_wt where pah == {a} and palo == {b} and'
          f' pad == {c} and pahi == {d} {qand}')
-    n = len([row for row in r.execute(q)])
-    print(f' exact modal occurs: {n} times')
+    rows = [row for row in r.execute(q)]
+    n = len(rows)
+    m = ', '.join([row['pub'] for row in rows])
+    print(f' exact modal occurs: {n} times ({m})')
     q = (f'select palo from midpoints_wt where palo == {b} and pahi == {d}'
          f' and pad == {c} {qand}')
     n = len([row for row in r.execute(q)])
@@ -61,10 +63,12 @@ print(f'Modal protocol: hold at {a}, step from {b} to {d} in {c}mV steps,'
       f' test at {e}mV')
 with base.connect() as con:
     r = con.cursor()
-    q = (f'select pih from midpoints_wt where pih == {a} and pilo == {b} and'
+    q = (f'select pub from midpoints_wt where pih == {a} and pilo == {b} and'
          f' pid == {c} and pihi == {d} and pit == {e} {qand}')
-    n = len([row for row in r.execute(q)])
-    print(f' exact modal occurs: {n} times')
+    rows = [row for row in r.execute(q)]
+    n = len(rows)
+    m = ', '.join([row['pub'] for row in rows])
+    print(f' exact modal occurs: {n} times ({m})')
     q = (f'select pih from midpoints_wt where pilo == {b} and pihi == {d} and'
          f' pid == {c} and pit == {e} {qand}')
     n = len([row for row in r.execute(q)])
