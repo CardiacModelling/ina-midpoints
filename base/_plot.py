@@ -37,3 +37,5 @@ def axletter(axes, letter, offset=-0.05, tweak=0,
     axes.text(x + offset, y + tweak, letter, font, ha=ha, va='top',
               transform=trans)
 
+
+#def axtext_low(axes, text, x=0, y)
