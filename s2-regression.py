@@ -17,25 +17,21 @@ qand = 'and cell != "Oocyte"' if nooocytes else ''
 # Create figure
 #
 print('Creating figure')
-fig = plt.figure(figsize=(9, 6.9))        # Two column size
-fig.subplots_adjust(0.08, 0.07, 0.99, 0.97, wspace=0.5, hspace=0.55)
-grid = fig.add_gridspec(3, 4)
+fig = plt.figure(figsize=(9, 8.4))        # Two column size
+fig.subplots_adjust(0.08, 0.055, 0.99, 0.97, wspace=0.5, hspace=0.55)
+grid = fig.add_gridspec(4, 4)
 
 
 def fit_line(ax, x, y):
     """ Fit line to x and y and plot on ax """
     p = np.corrcoef(x, y)[1, 0]
     b, a = np.polyfit(x, y, 1)
-    #print('Fit to all data')
-    #print(f'  a, b: {a:.1f}, {b:.2f}')
-    #print(f'  Pearson correlation coefficient: {p:.2f}')
-    #print(f'                          squared: {p**2:.2f}')
 
     lo, hi = np.min(x), np.max(x)
     pad = 0.05 * (hi - lo)
     xx = np.linspace(lo - pad, hi + pad)
     ax.plot(xx, a + b * xx)
-    ax.text(1, 1.01, f'$r^2={p**2:.2f}$',
+    ax.text(1, 1.01, f'$n={len(x)}$, $r^2={p**2:.2f}$',
             ha='right', va='bottom', transform=ax.transAxes)
 
 
@@ -142,28 +138,9 @@ with base.connect() as con:
     fit_line(ax11, x, y)
 
     #
-    # [K]i on Va and Vi
-    #
-    ax12 = fig.add_subplot(grid[2, 0])
-    ax12.set_xlabel('$[K^{2+}]_i$')
-    ax12.set_ylabel(r'$\mu_a$ (mV)')
-    ax12.grid(True, ls=':')
-    x, y = va('k_i')
-    ax12.plot(x, y, 'o', markerfacecolor='none')
-    fit_line(ax12, x, y)
-
-    ax13 = fig.add_subplot(grid[2, 1])
-    ax13.set_xlabel('$[K^{2+}]_i$')
-    ax13.set_ylabel(r'$\mu_i$ (mV)')
-    ax13.grid(True, ls=':')
-    x, y = vi('k_i')
-    ax13.plot(x, y, 'o', markerfacecolor='none')
-    fit_line(ax13, x, y)
-
-    #
     # [Ca]e on Va and Vi
     #
-    ax12 = fig.add_subplot(grid[2, 2])
+    ax12 = fig.add_subplot(grid[2, 0])
     ax12.set_xlabel('$[Ca^{2+}]_e$')
     ax12.set_ylabel(r'$\mu_a$ (mV)')
     ax12.grid(True, ls=':')
@@ -171,11 +148,68 @@ with base.connect() as con:
     ax12.plot(x, y, 'o', markerfacecolor='none')
     fit_line(ax12, x, y)
 
-    ax13 = fig.add_subplot(grid[2, 3])
+    ax13 = fig.add_subplot(grid[2, 1])
     ax13.set_xlabel('$[Ca^{2+}]_e$')
     ax13.set_ylabel(r'$\mu_i$ (mV)')
     ax13.grid(True, ls=':')
     x, y = vi('ca_e')
+    ax13.plot(x, y, 'o', markerfacecolor='none')
+    fit_line(ax13, x, y)
+
+    #
+    # [Ca]i on Va and Vi
+    #
+    ax12 = fig.add_subplot(grid[2, 2])
+    ax12.set_xlabel('$[Ca^{2+}]_{i,b}$')
+    ax12.set_ylabel(r'$\mu_a$ (mV)')
+    ax12.grid(True, ls=':')
+    x, y = va('ca_ib')
+    ax12.plot(x, y, 'o', markerfacecolor='none')
+    fit_line(ax12, x, y)
+
+    ax13 = fig.add_subplot(grid[2, 3])
+    ax13.set_xlabel('$[Ca^{2+}]_{i,b}$')
+    ax13.set_ylabel(r'$\mu_i$ (mV)')
+    ax13.grid(True, ls=':')
+    x, y = vi('ca_ib')
+    ax13.plot(x, y, 'o', markerfacecolor='none')
+    fit_line(ax13, x, y)
+
+    #
+    # [Cl]e on Va and Vi
+    #
+    ax12 = fig.add_subplot(grid[3, 0])
+    ax12.set_xlabel('$[Cl^{-}]_e$')
+    ax12.set_ylabel(r'$\mu_a$ (mV)')
+    ax12.grid(True, ls=':')
+    x, y = va('cl_e')
+    ax12.plot(x, y, 'o', markerfacecolor='none')
+    fit_line(ax12, x, y)
+
+    ax13 = fig.add_subplot(grid[3, 1])
+    ax13.set_xlabel('$[Cl^{-}]_e$')
+    ax13.set_ylabel(r'$\mu_i$ (mV)')
+    ax13.grid(True, ls=':')
+    x, y = vi('cl_e')
+    ax13.plot(x, y, 'o', markerfacecolor='none')
+    fit_line(ax13, x, y)
+
+    #
+    # [Cl]e on Va and Vi
+    #
+    ax12 = fig.add_subplot(grid[3, 2])
+    ax12.set_xlabel('$[Cl^{-}]_i$')
+    ax12.set_ylabel(r'$\mu_a$ (mV)')
+    ax12.grid(True, ls=':')
+    x, y = va('cl_i')
+    ax12.plot(x, y, 'o', markerfacecolor='none')
+    fit_line(ax12, x, y)
+
+    ax13 = fig.add_subplot(grid[3, 3])
+    ax13.set_xlabel('$[Cl^{-}]_i$')
+    ax13.set_ylabel(r'$\mu_i$ (mV)')
+    ax13.grid(True, ls=':')
+    x, y = vi('cl_i')
     ax13.plot(x, y, 'o', markerfacecolor='none')
     fit_line(ax13, x, y)
 
@@ -192,6 +226,6 @@ with base.connect() as con:
 #base.axletter(ax22, 'E', tweak=y1, offset=x1)
 #base.axletter(ax23, 'F', tweak=y1, offset=x1)
 
-fname = 'f5-qc' + ('.png' if 'png' in sys.argv else '.pdf')
+fname = 's2-regression' + ('.png' if 'png' in sys.argv else '.pdf')
 print(f'Saving to {fname}')
 fig.savefig(fname)
