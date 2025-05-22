@@ -3,6 +3,8 @@
 # Calculates statistics about the standard deviations reported in the midpoints
 # data.
 #
+import numpy as np
+
 import base
 
 nooocytes = True
@@ -29,11 +31,17 @@ with base.connect() as con:
     row = next(c.execute(
         f'select count(va) from midpoints_wt where na > 0 {a}'))
     print(f'Total Va experiments: {row[0]}')
+    ns = np.array([int(row[0]) for row in c.execute(
+        f'select na from midpoints_wt where na > 0 {a}')])
+    print(f'  Min, max, median', np.min(ns), np.max(ns), np.median(ns))
 
     # Count Vi measurements
     row = next(c.execute(
         f'select count(vi) from midpoints_wt where ni > 0 {a}'))
     print(f'Total Vi experiments: {row[0]}')
+    ns = np.array([int(row[0]) for row in c.execute(
+        f'select ni from midpoints_wt where ni > 0 {a}')])
+    print(f'  Min, max, median', np.min(ns), np.max(ns), np.median(ns))
 
     # Count Va + Vi measurements
     print()

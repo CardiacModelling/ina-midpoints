@@ -39,8 +39,8 @@ print('Creating figure')
 fig = plt.figure(figsize=(9, 10.5))    # Two column size
 fig.subplots_adjust(0.054, 0.04, 0.987, 0.995, hspace=0.3)
 
-grid1 = fig.add_gridspec(2, 1, height_ratios=[3.1, 1], hspace=0.15)
-grid2 = grid1[1, 0].subgridspec(2, 2, hspace=1.1)
+grid1 = fig.add_gridspec(2, 1, height_ratios=[3.1, 1], hspace=0.12)
+grid2 = grid1[1, 0].subgridspec(2, 2, hspace=1.25)
 
 ax1 = fig.add_subplot(grid1[0, :])
 ax21 = fig.add_subplot(grid2[0, :])
@@ -51,8 +51,9 @@ ax32 = fig.add_subplot(grid2[1, 1])
 #
 # Top: all data
 #
+xlim = -120, 0
 ax1.set_xlabel('Membrane potential (mV)')
-ax1.set_xlim(-120, 0)
+ax1.set_xlim(*xlim)
 ax1.set_ylim(-2, 1 + max(len(a), len(i)))
 for s in ax1.spines.values():
     s.set_visible(False)
@@ -105,11 +106,11 @@ ax1.legend(loc='upper left', frameon=False, handles=elements)
 vi, _, stdi, ni = np.array([row for row in i]).T
 va, _, stda, na = np.array([row for row in a]).T
 
-bins = np.arange(-110, -10, 2.5)
+bins = np.arange(*xlim, 2.5)
 kwargs = dict(bins=bins, facecolor='none')
 ax21.set_xlabel('Membrane potential (mV)')
 ax21.set_ylabel('Percentage')
-ax21.set_xlim(-112, -18)
+ax21.set_xlim(*xlim)
 
 w = np.ones(len(vi)) / len(vi) * 100
 ax21.hist(vi, weights=w, edgecolor='tab:orange', label=r'$\mu_i$', **kwargs)
