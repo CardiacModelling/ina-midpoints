@@ -7,13 +7,17 @@ This repository contains the data and code accompanying the paper
 > Journal of General Physiology, 2025
 > https://doi.org/10.1085/jgp.202413621
 
-The data is all derived from an sqlite database (see `base/midpoints.sqlite`) that was created in 2016 and updated in 2024/2025 for the study
+Except for the schematic overview of Figure 1, all figures, tables and numerical results in the text can be recreated by running the scripts in this repository, as detailed below.
+
+The data is mostly derived from an sqlite database (see `base/midpoints.sqlite`) that was created in 2016 for the study
 
 > Predicting changes to INa from missense mutations in human SCN5A.
 > Michael Clerx, Jordi Heijman, Pieter Collins, Paul G.A. Volders.
 > Scientific Reports.
 > https://doi.org/10.1038/s41598-018-30577-5
 > and https://github.com/MichaelClerx/mutations-scn5a
+
+Additional meta-data was added to the database in 2024 and 2025.
 
 ## Requirements
 
@@ -60,4 +64,3 @@ Numbers that appear in the text can be obtained using the scripts listed below.
   - Best fit slope and offset.
   - Pearson correlation coefficient.
   - Fixed-slope fit offset
-
