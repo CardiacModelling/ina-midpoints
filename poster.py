@@ -82,11 +82,11 @@ def fig2(w, h, left=0.047, bottom=0.035, right=0.99, top=0.99, wspace=None,
     ms2 = 12
     elements = [
         matplotlib.lines.Line2D(
-            [0], [0], marker=m, color='w', label=r'$\mu_i$', markersize=ms2,
-            markerfacecolor=ci),
+            [0], [0], marker=m, color='w', label=rf'$\mu_i$ ({len(i)})',
+            markersize=ms2, markerfacecolor=ci),
         matplotlib.lines.Line2D(
-            [0], [0], marker=m, color='w', label=r'$\mu_a$', markersize=ms2,
-            markerfacecolor=ca),
+            [0], [0], marker=m, color='w', label=rf'$\mu_a$ ({len(a)})',
+            markersize=ms2, markerfacecolor=ca),
         matplotlib.lines.Line2D(
             [0], [0], color=ssem['color'], label='SEM', lw=ssem['lw']),
         matplotlib.lines.Line2D(
@@ -151,7 +151,6 @@ def fig3(w, h, left=0.14, bottom=0.09, right=0.99, top=0.99):
     c2 = 'tab:red'
 
     # Gather data
-    print('Gathering data')
     with base.connect() as con:
         c = con.cursor()
 
@@ -433,10 +432,9 @@ def fig4(w, h, left=0.045, bottom=0.15, right=0.955, top=0.86, wspace=None):
 #
 # Create figure
 #
-print('Creating figures')
-
 r = 0.02
-#fig2(524 * r, 632 * r).savefig('poster-2.svg')
-#fig3(259 * r, 257 * r).savefig('poster-3.svg')
+print('Creating figures')
+fig2(524 * r, 632 * r).savefig('poster-2.svg')
+fig3(259 * r, 257 * r).savefig('poster-3.svg')
 fig4(815 * r, 161 * r).savefig('poster-4.svg')
-
+print('Done')
